@@ -23,6 +23,10 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Font;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainWindow {
@@ -38,11 +42,14 @@ public class MainWindow {
 	private JButton btnUndo;
 	private JButton btnSaveChanges;
 	private JButton btnSendMessage;
-
+	static private DBConnect connect;
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		connect = new DBConnect();
+				
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -82,7 +89,24 @@ public class MainWindow {
 		table.setBounds(10, 29, 322, 210);
 		getJFrame().getContentPane().add(table);
 		
-		list = new JList();
+		List <String> lista;
+		lista= new ArrayList<String>();
+		
+		ResultSet rs = connect.query("select * from `players in ladder`");
+		
+		
+		try {
+			while(rs.next()){
+				  lista.add(rs.getString("Username"));
+				  
+				}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	
+		
+		list = new JList(lista.toArray());
 		list.setBounds(342, 28, 135, 211);
 		getJFrame().getContentPane().add(list);
 		
