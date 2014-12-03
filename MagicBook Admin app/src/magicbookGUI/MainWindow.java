@@ -48,12 +48,12 @@ public class MainWindow {
 	 */
 	public static void main(String[] args) {
 		
-		connect = new DBConnect();
+		//connect = new DBConnect();
 				
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindow window = new MainWindow();
+					MainWindow window = new MainWindow(new DBConnect());
 					window.getJFrame().setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -65,8 +65,10 @@ public class MainWindow {
 	/**
 	 * Create the application.
 	 */
-	public MainWindow() {
+	public MainWindow(DBConnect connect) {
+		this.connect = connect;
 		initialize();
+		
 	}
 	
 	public MainWindow(Connection connection){
