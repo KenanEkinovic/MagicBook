@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 03, 2014 at 11:10 PM
+-- Generation Time: Dec 03, 2014 at 11:40 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -52,7 +52,7 @@ INSERT INTO `admininfo` (`id`, `username`, `password`) VALUES
 DROP TABLE IF EXISTS `card`;
 CREATE TABLE IF NOT EXISTS `card` (
   `id` int(11) NOT NULL,
-  `name` varchar(20) DEFAULT NULL,
+  `name` varchar(30) DEFAULT NULL,
   `hero` int(11) DEFAULT NULL,
   `rarity` varchar(10) DEFAULT NULL,
   `type` varchar(10) DEFAULT NULL,
@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `card` (
 INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `hp`, `picture`) VALUES
 (1, 'Heroic Strike', 2, 'Free', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/794/1.png'),
 (3, 'Edwin VanCleef', 4, 'Legendary', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/800/3.png'),
+(4, 'Sorcerer^s Apprentice', 3, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/785/4.png'),
 (7, 'Blessed Champion', 8, 'Rare', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/513/7.png'),
 (8, 'Darkspear Hunter', 7, 'Rare', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/632/8.png'),
 (10, 'Lightning Bolt', 9, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/344/10.png'),
@@ -78,6 +79,7 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `h
 (15, 'Oasis Snapjaw', 0, 'Free', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/815/15.png'),
 (18, 'Gruul', 0, 'Legendary', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/479/18.png'),
 (19, 'Nat Pagle', 0, 'Legendary', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/671/19.png'),
+(22, 'Hunter^s Mark', 7, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/752/22.png'),
 (23, 'Aldor Peacekeeper', 8, 'Rare', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/538/23.png'),
 (24, 'Shieldbearer', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/581/24.png'),
 (25, 'Wild Pyromancer', 0, 'Rare', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/428/25.png'),
@@ -115,6 +117,7 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `h
 (77, 'Earth Shock', 9, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/356/77.png'),
 (80, 'Mad Bomber', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/149/80.png'),
 (81, 'Cleave', 2, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/806/81.png'),
+(82, 'Perdition^s Blade', 4, 'Rare', 'Weapon', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/233/82.png'),
 (84, 'Darkscale Healer', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/983/84.png'),
 (85, 'Flame Imp', 6, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/467/85.png'),
 (86, 'Timber Wolf', 7, 'Free', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/989/86.png'),
@@ -143,6 +146,7 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `h
 (127, 'Master of Disguise', 4, 'Rare', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/412/127.png'),
 (128, 'Dark Iron Dwarf', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/110/128.png'),
 (129, 'Dust Devil', 9, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/350/129.png'),
+(130, 'Kor^kron Elite', 2, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/406/130.png'),
 (131, 'Gadgetzan Auctioneer', 0, 'Rare', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/141/575/131.png'),
 (135, 'Headcrack', 4, 'Rare', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/242/135.png'),
 (138, 'Priestess of Elune', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/737/138.png'),
@@ -216,6 +220,7 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `h
 (246, 'Gnomish Inventor', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/848/246.png'),
 (247, 'Youthful Brewmaster', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/116/247.png'),
 (249, 'Mass Dispel', 1, 'Rare', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/845/249.png'),
+(250, 'Light^s Justice', 8, 'Free', 'Weapon', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/764/250.png'),
 (251, 'Gelbin Mekkatorque', 0, 'Legendary', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/197/251.png'),
 (252, 'Corruption', 6, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/716/252.png'),
 (256, 'Bloodlust', 9, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/682/256.png'),
@@ -231,6 +236,7 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `h
 (273, 'Wisp', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/937/273.png'),
 (274, 'Water Elemental', 3, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/658/274.png'),
 (276, 'Blizzard', 3, 'Rare', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/644/276.png'),
+(278, 'Gladiator^s Longbow', 7, 'Epic', 'Weapon', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/4/278.png'),
 (279, 'Scavenging Hyena', 7, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/626/279.png'),
 (280, 'Azure Drake', 0, 'Rare', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/402/280.png'),
 (282, 'Wild Growth', 5, 'Free', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/615/282.png'),
@@ -253,15 +259,19 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `h
 (323, 'War Golem', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/894/323.png'),
 (324, 'Southsea Captain', 0, 'Epic', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/452/324.png'),
 (325, 'Stormpike Commando', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/851/325.png'),
+(326, 'Sen^jin Shieldmasta', 0, 'Free', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/884/326.png'),
 (327, 'Sense Demons', 6, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/459/327.png'),
 (328, 'Cruel Taskmaster', 2, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/773/328.png'),
 (329, 'Savage Roar', 5, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/609/329.png'),
 (332, 'Drain Life', 6, 'Free', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/710/332.png'),
+(335, 'Al^Akir the Windlord', 9, 'Legendary', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/403/335.png'),
 (338, 'Jadefire Satyr', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/88/338.png'),
 (339, 'Millhouse Manastorm', 0, 'Legendary', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/455/339.png'),
 (340, 'Voidwalker', 6, 'Free', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/722/340.png'),
 (344, 'Explosive Trap', 7, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/791/344.png'),
 (345, 'Mortal Strike', 2, 'Rare', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/587/345.png'),
+(346, 'Mogu^shan Warden', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/563/346.png'),
+(348, 'Grimoire of Sacrifice', 6, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/368/348.png'),
 (350, 'Hammer of Wrath', 8, 'Free', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/773/350.png'),
 (355, 'Holy Wrath', 8, 'Rare', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/526/355.png'),
 (356, 'Elven Archer', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/903/356.png'),
@@ -306,6 +316,7 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `h
 (428, 'Acolyte of Pain', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/33/428.png'),
 (431, 'Power Word: Shield', 1, 'Free', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/594/431.png'),
 (432, 'Onyxia', 0, 'Legendary', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/686/432.png'),
+(433, 'Assassin^s Blade', 4, 'Common', 'Weapon', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/743/433.png'),
 (434, 'Shattered Sun Cleric', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/69/434.png'),
 (435, 'Novice Engineer', 0, 'Free', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/60/435.png'),
 (436, 'Lightwarden', 0, 'Rare', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/16/436.png'),
@@ -343,9 +354,11 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `h
 (499, 'Hand of Protection', 8, 'Free', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/532/499.png'),
 (500, 'Ironbeak Owl', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/919/500.png'),
 (502, 'Raid Leader', 0, 'Free', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/824/502.png'),
+(503, 'Ragnaros the Firelord', 0, 'Legendary', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/417/503.png'),
 (504, 'Arathi Weaponsmith', 2, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/566/504.png'),
 (506, 'Lay on Hands', 8, 'Epic', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/510/506.png'),
 (507, 'Doomguard', 6, 'Rare', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/444/507.png'),
+(509, 'Venture Co. Mercenary', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/934/509.png'),
 (510, 'Grimscale Oracle', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/617/510.png'),
 (513, 'Leper Gnome', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/91/513.png'),
 (518, 'Ravenholdt Assassin', 0, 'Rare', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/863/518.png'),
@@ -369,6 +382,7 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `cost`, `attack`, `h
 (553, 'Snipe', 7, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/127/788/553.png'),
 (554, 'Divine Spirit', 1, 'Common', 'Ability', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/952/554.png'),
 (557, 'Earthen Ring Farseer', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/809/557.png'),
+(559, 'Captain^s Parrot', 0, 'Epic', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/416/559.png'),
 (560, 'Reckless Rocketeer', 0, 'Free', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/922/560.png'),
 (562, 'Kidnapper', 4, 'Epic', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/128/374/562.png'),
 (564, 'Goldshire Footman', 0, 'Common', 'Minion', 0, 0, 0, 'http://media-Hearth.cursecdn.com/avatars/126/570/564.png'),

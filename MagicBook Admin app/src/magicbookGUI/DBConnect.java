@@ -46,8 +46,6 @@ public class DBConnect {
 	
 	public ResultSet query(String query){
 		try{
-			
-			
 			rs = st.executeQuery(query);
 			
 			return rs;
@@ -57,4 +55,13 @@ public class DBConnect {
 			return null;
 		}
 	}
+	
+	public void executeUpdate(String statement){
+		try {
+			st.executeUpdate(statement);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

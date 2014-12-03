@@ -123,6 +123,12 @@ public class MainWindow {
 		getJFrame().getContentPane().add(lblLadder);
 		
 		btnUpdateDatabase = new JButton("Update database");
+		btnUpdateDatabase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				DataMining d = new DataMining(connect);
+				d.start();
+			}
+		});
 		btnUpdateDatabase.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnUpdateDatabase.setForeground(new Color(255, 255, 255));
 		btnUpdateDatabase.setBackground(new Color(95, 158, 160));
