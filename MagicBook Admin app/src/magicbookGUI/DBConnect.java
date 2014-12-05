@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class DBConnect {
 	
-	private Connection conn;
+	static private Connection conn;
 	private Statement st;
 	private ResultSet rs;
 	
@@ -27,6 +27,7 @@ public class DBConnect {
 			conn = DriverManager.getConnection(url, user, password);
 			
 			st = conn.createStatement();
+			//st = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE, ResultSet.HOLD_CURSORS_OVER_COMMIT);
 			
 		} catch(Exception e)
 		{
@@ -46,8 +47,6 @@ public class DBConnect {
 	
 	public ResultSet query(String query){
 		try{
-			
-			
 			rs = st.executeQuery(query);
 			
 			return rs;
@@ -57,4 +56,13 @@ public class DBConnect {
 			return null;
 		}
 	}
+	
+	public void executeUpdate(String statement){
+		try {
+			st.executeUpdate(statement);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
