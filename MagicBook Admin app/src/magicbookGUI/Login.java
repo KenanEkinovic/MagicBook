@@ -1,5 +1,7 @@
 package magicbookGUI;
 
+//oracle apex
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -81,7 +83,7 @@ public class Login {
 					
 					if(txtUsername.getText().equals(username) && txtPassword.getText().equals(password)){
 						//JOptionPane.showMessageDialog(frmMagicbookAdministratorApp, "OK");
-						MainWindow mw = new MainWindow();
+						MainWindow mw = new MainWindow(connect);
 						frmMagicbookAdministratorApp.dispose();
 						mw.getJFrame().setVisible(true);
 					}
