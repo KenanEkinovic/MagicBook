@@ -56,51 +56,30 @@ public class DataMining {
 					String name = "";
 					String rarity = "";
 					String type = "";
-					String subtype = "";
-					long hero = 0;			
+					long hero = 0;
+					
+					int cost;
+					int attack;
+					int hp;
 					
 					String pictureURL = "";
+					//
 					
 					boolean image_not_found = true;
 					
 					String inputLine;
-					//String PageSource = "";
-					int line_number=-1;
+					String PageSource = "";
 					while ((inputLine = in.readLine()) != null)
 					{
-						//PageSource+=inputLine + "\n";
-						line_number++;
-						if(line_number<1000)
-							continue;
+						PageSource+=inputLine + "\n";
 						//card name
-						//old regex -> Pattern regex = Pattern.compile(".*hearthstone.gamepedia.com/(.*)\" target=.*");
-						Pattern regex;
-						Matcher m;
-						if(inputLine.contains("<li>BBCode:"))
+						Pattern regex = Pattern.compile(".*hearthstone.gamepedia.com/(.*)\" target=.*");
+						Matcher m = regex.matcher(inputLine);
+						if(m.matches())
 						{
-							regex = Pattern.compile(".*value=\"(.*) /></li>.*");
-							m = regex.matcher(inputLine);
-							if(m.matches())
-							{
-								name = m.group(1).substring(6, m.group(1).length()-8);
-								if(name.length()>30)
-								{
-									StringBuilder sbname = new StringBuilder(name);
-									for(int j=0; j<sbname.length(); j++)
-									{
-										if(sbname.charAt(j)=='"')
-										{
-											name = sbname.substring(0, j);
-											break;
-										}
-									}
-								}
-									
-								
-								System.out.println("Name: " + name);
-								
-								continue;
-							}
+							System.out.println("Name: " + m.group(1));
+							name = m.group(1);
+							continue;
 						}
 
 						//card type
@@ -120,15 +99,6 @@ public class DataMining {
 								card_is_valid = false;
 								break;
 							}
-						}
-						
-						//subtype
-						if(inputLine.contains("<li>Race:"))
-						{
-							regex = Pattern.compile(".*>(.*)</a>.*");
-							m = regex.matcher(inputLine);
-							if(m.matches())
-								subtype = m.group(1);
 						}
 						
 						//is it a token?
@@ -183,72 +153,15 @@ public class DataMining {
 							image_not_found = false;
 							continue;
 						}
-					}
-					
-					//getting aditional info
-					if(card_is_valid)
-					{
+						
 						//cost of the card
 						//attack of the card
 						//hp of the card
-						StringBuilder urlextension = new StringBuilder(name);
-						for(int k=0; k<urlextension.length(); k++)
-						{
-							if(urlextension.charAt(k) == ' ')
-								urlextension.setCharAt(k, '_');
-							
-							//     '    --->    %27
-							if(urlextension.charAt(k) == '\'')
-							{
-								String start = urlextension.substring(0,k);
-								String end = urlextension.substring(k+1, urlextension.length());
-								urlextension = new StringBuilder(start + "%27" + end);
-							}
-							
-						}
-						conn = (new URL("http://hearthstone.gamepedia.com/"+urlextension.toString())).openConnection();
-						conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36");
-						conn.setReadTimeout(0);
-						conn.connect();
-						
-						BufferedReader br2 = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-						
-						int cost =0;
-						int attack =0;
-						int hp =0;
-						
-						while ((inputLine = br2.readLine()) != null)
-						{
-							
-							//cost
-							if(inputLine.contains("<img alt=\"Mana icon.png\""))
-							{
-								Pattern regex = Pattern.compile(".*<td> (.?) <img alt=\"Mana icon.png\".*");
-								Matcher m = regex.matcher(inputLine);
-								if(m.matches())
-									cost = Integer.parseInt(m.group(1));
-							}
-							//attack
-							if(inputLine.contains("<img alt=\"Attack icon.png\""))
-							{
-								Pattern regex = Pattern.compile(".*<td> (.?) <img alt=\"Attack icon.png\".*");
-								Matcher m = regex.matcher(inputLine);
-								if(m.matches())
-									attack = Integer.parseInt(m.group(1));
-							}
-							//HP
-							if(inputLine.contains("<img alt=\"Health icon.png\""))
-							{
-								Pattern regex = Pattern.compile(".*<td> (.?) <img alt=\"Health icon.png\".*");
-								Matcher m = regex.matcher(inputLine);
-								if(m.matches())
-									hp = Integer.parseInt(m.group(1));
-							}
-						}
-						System.out.println("Cost "+cost + " attack " + attack + " health " + hp);
-						
-						//creating the card
+					}
+					
+					//create card
+					if(card_is_valid)
+					{
 						if(name.contains("'"))
 						{
 							StringBuilder sbname = new StringBuilder(name);
@@ -261,19 +174,9 @@ public class DataMining {
 							}
 							name = sbname.toString();
 						}
-						String sql = "INSERT INTO card " +
-				                   "VALUES ("+i+", '"+name+"', ";
-						if(hero!=0)
-							sql += ""+hero;
-						else
-							sql += "NULL";
-						sql += ", '"+rarity+"', '"+type+"', ";
-						if(subtype.equals(""))
-							sql += "NULL";
-						else
-							sql += "'" + subtype + "'";
-						sql += ", '"+cost+"', '"+attack+"', '"+hp+"','"+pictureURL+"' )";
 						
+						String sql = "INSERT INTO card " +
+				                   "VALUES ("+i+", '"+name+"', "+hero+", '"+rarity+"', '"+type+"', '0', '0', '0','"+pictureURL+"' )";
 						DBconn.executeUpdate(sql);
 					}
 					
