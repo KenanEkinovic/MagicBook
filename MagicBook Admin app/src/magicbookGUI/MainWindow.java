@@ -9,14 +9,17 @@ import javax.swing.GroupLayout.Alignment;
 import java.awt.Component;
 
 import javax.swing.Box;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JList;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -27,26 +30,31 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JSplitPane;
 import javax.swing.JPanel;
+
 import java.awt.FlowLayout;
 import java.awt.BorderLayout;
+
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
+
 import java.awt.SystemColor;
+
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
-
+import javax.swing.table.TableColumnModel;
 
 public class MainWindow {
 	
 	public static Connection conn;
 
 	private JFrame frmHeartstone;
-	private JTable table;
+	private JTable tableCard;
 	private JList list;
 	private JButton btnUpdateDatabase;
 	private JButton btnUndo;
@@ -88,6 +96,38 @@ public class MainWindow {
 		initialize();
 		conn = connection;
 	}
+	
+	TableModel tm;
+	private JPanel panel_6;
+	private JScrollPane scrollPane;
+	private JScrollPane scrollPane_1;
+	private JPanel panel_7;
+	private void initializeCardTable()
+	{
+		tm = new TableModel();
+		
+		tm.setConnection(connect);
+		tm.executeQuery("select * from card");
+		
+		/**/
+		/*
+		  QueryTableModel qtm;
+
+		  public DatabaseTest() {
+		    super("Database Test Frame");
+		    qtm = new QueryTableModel();
+		    JTable table = new JTable(qtm);
+
+		    JButton jb = new JButton("Search");
+		    jb.addActionListener(new ActionListener() {
+		      public void actionPerformed(ActionEvent e) {
+		        qtm.setQuery(queryField.getText().trim());
+		      }
+		    });
+		    p1.add(jb);
+		    getContentPane().add(p1, BorderLayout.NORTH);
+		    getContentPane().add(scrollpane, BorderLayout.CENTER);*/
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -119,11 +159,6 @@ public class MainWindow {
 		JPanel panel = new JPanel();
 		frmHeartstone.getContentPane().add(panel, BorderLayout.EAST);
 		panel.setLayout(new BorderLayout(0, 0));
-		
-			
-			list = new JList(lista.toArray());
-			list.setBorder(new TitledBorder(new MatteBorder(4, 4, 4, 4, (Color) new Color(51, 153, 255)), "Ladder", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
-			panel.add(list, BorderLayout.CENTER);
 			
 			panel_3 = new JPanel();
 			panel.add(panel_3, BorderLayout.SOUTH);
@@ -132,6 +167,17 @@ public class MainWindow {
 			panel_3.add(btnSendMessage);
 			btnSendMessage.setFont(new Font("Tahoma", Font.PLAIN, 11));
 			
+			panel_7 = new JPanel();
+			panel.add(panel_7, BorderLayout.CENTER);
+			panel_7.setLayout(new BorderLayout(0, 0));
+			
+			list = new JList(lista.toArray());
+			//list.setBorder(new TitledBorder(new MatteBorder(4, 4, 4, 4, (Color) new Color(51, 153, 255)), "Ladder", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
+			//panel.add(list, BorderLayout.NORTH);
+			
+			JScrollPane scrollPane_1 = new JScrollPane(list);
+			panel_7.add(scrollPane_1);
+			panel_7.setBorder(new TitledBorder(new MatteBorder(4, 4, 4, 4, (Color) new Color(51, 153, 255)), "Ladder", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
 			JPanel panel_1 = new JPanel();
 			panel_1.setBorder(null);
 			frmHeartstone.getContentPane().add(panel_1);
@@ -151,6 +197,10 @@ public class MainWindow {
 				public void actionPerformed(ActionEvent arg0) {
 					CardCollector d = new CardCollector(connect);
 					d.start();
+					
+					//adding rows into the window table
+					initializeCardTable();
+					tableCard = new JTable(tm);
 				}
 			});
 			btnUpdateDatabase.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -173,9 +223,20 @@ public class MainWindow {
 				}
 			});
 			
-			JTable table = new JTable();
-			table.setBorder(new TitledBorder(new MatteBorder(4, 4, 4, 4, (Color) new Color(51, 153, 255)), "Cards", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
-			panel_1.add(table, BorderLayout.CENTER);
+			initializeCardTable();
+			tableCard = new JTable(tm);
+			
+			setMaxColumnWidth();
+			
+			panel_6 = new JPanel();
+			panel_1.add(panel_6, BorderLayout.CENTER);
+			panel_6.setLayout(new BorderLayout(100, 100));
+			panel_6.setBorder(new TitledBorder(new MatteBorder(4, 4, 4, 4, (Color) new Color(51, 153, 255)), "Cards", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
+			
+			scrollPane = new JScrollPane(tableCard);
+			panel_6.add(scrollPane, BorderLayout.CENTER);
+			
+			//panel_6.add(tableCard);
 	}
 
 	public JFrame getJFrame() {
@@ -184,5 +245,18 @@ public class MainWindow {
 
 	public void setJFrame(JFrame frmHeartstone) {
 		this.frmHeartstone = frmHeartstone;
+	}
+	
+	private void setMaxColumnWidth()
+	{
+		TableColumnModel cm = tableCard.getColumnModel();
+		cm.getColumn(0).setMaxWidth(30);
+		cm.getColumn(2).setMaxWidth(33);
+		cm.getColumn(3).setMaxWidth(60);
+		cm.getColumn(4).setMaxWidth(60);
+		cm.getColumn(5).setMaxWidth(80);
+		cm.getColumn(6).setMaxWidth(33);
+		cm.getColumn(7).setMaxWidth(33);
+		cm.getColumn(8).setMaxWidth(33);
 	}
 }

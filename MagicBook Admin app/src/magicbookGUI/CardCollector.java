@@ -140,6 +140,10 @@ public class CardCollector {
 							inputLine2 = br2.readLine();
 							inputLine2 = br2.readLine();
 							type = testRegex(".*>(.*)</a>.*", inputLine2);
+							if(type.equals("")){
+								card_is_valid = false;
+								break;
+							}
 						}
 						//subtype
 						if(inputLine2.contains("<b>Subtype:</b>"))
@@ -226,8 +230,10 @@ public class CardCollector {
 			for(int j=0; j<sbname.length(); j++)
 			{
 				if(sbname.charAt(j)=='\'')
-					sbname.setCharAt(j, '^');
-					
+				{
+					sbname = new StringBuilder( sbname.substring(0, j) + "\'\'" + sbname.substring(j+1, sbname.length()));
+					j++;
+				}
 			}
 			name = sbname.toString();
 		}
