@@ -57,7 +57,6 @@ public class CardCollector {
 				loadSite("Epic");
 				loadSite("Legendary");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -100,6 +99,7 @@ public class CardCollector {
 				int attack =0;
 				int hp =0;
 				
+				boolean card_is_valid = true;
 				
 				Pattern regex = Pattern.compile(".*<td class=.*<a href=\"(.*)\" title=\".*");
 				Matcher m = regex.matcher(CardPart);
@@ -115,9 +115,16 @@ public class CardCollector {
 					
 					BufferedReader br2 = new BufferedReader(new InputStreamReader(conn2.getInputStream()));
 
+					
 					String inputLine2;
 					while ((inputLine2 = br2.readLine()) != null)
 					{
+						//check if uncollectible
+						if(inputLine2.contains("<a href=\"/Uncollectible\" title=\"Uncollectible\">uncollectible</a>"))
+						{
+							card_is_valid = false;
+							break;
+						}
 						//name
 						if(inputLine2.contains("<title>"))
 						{
@@ -163,18 +170,24 @@ public class CardCollector {
 							}
 						}
 						//cost
-						if(inputLine2.contains("<img alt=\"Mana icon.png\""))
+						if(inputLine2.contains("<th> <b>Cost:</b>"))
 						{
+							inputLine2 = br2.readLine();
+							inputLine2 = br2.readLine();
 							cost = Integer.parseInt(testRegex(".*<td> (.*) <img alt=\"Mana icon.png\".*", inputLine2));
 						}
 						//attack
-						if(inputLine2.contains("<img alt=\"Attack icon.png\""))
+						if(inputLine2.contains("<th> <b>Attack:</b>"))
 						{
+							inputLine2 = br2.readLine();
+							inputLine2 = br2.readLine();
 							attack = Integer.parseInt(testRegex(".*<td> (.*) <img alt=\"Attack icon.png\".*", inputLine2));
 						}
 						//HP
-						if(inputLine2.contains("<img alt=\"Health icon.png\""))
+						if(inputLine2.contains("<th> <b>Health:</b>"))
 						{
+							inputLine2 = br2.readLine();
+							inputLine2 = br2.readLine();
 							hp = Integer.parseInt( testRegex(".*<td> (.*) <img alt=\"Health icon.png\".*", inputLine2));
 						}
 						//pictureURL
@@ -188,12 +201,15 @@ public class CardCollector {
 						}
 					}
 					
-					System.out.println(name + " " + hero + " " + type + " " + subtype + " " + cost + " " + attack + " " + hp + " ");
-					System.out.println(pictureURL);
+					if(card_is_valid){
+						System.out.println(name + " " + hero + " " + type + " " + subtype + " " + cost + " " + attack + " " + hp + " ");
+						System.out.println(pictureURL);
+					}
 				}
 				
+				if(card_is_valid)
 				//creating the card into database
-				createCard(name, rarity, type, subtype, hero, pictureURL, cost, attack, hp);
+					createCard(name, rarity, type, subtype, hero, pictureURL, cost, attack, hp);
 				
 			}
 			
