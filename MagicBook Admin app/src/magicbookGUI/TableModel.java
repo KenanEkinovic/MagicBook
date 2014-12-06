@@ -10,7 +10,7 @@ import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 
 class TableModel extends AbstractTableModel {
-	  Vector cache; // will hold String[] objects . . .
+	  Vector cache; //String[] objects
 
 	  int colCount;
 

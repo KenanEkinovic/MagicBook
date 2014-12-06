@@ -109,24 +109,6 @@ public class MainWindow {
 		tm.setConnection(connect);
 		tm.executeQuery("select * from card");
 		
-		/**/
-		/*
-		  QueryTableModel qtm;
-
-		  public DatabaseTest() {
-		    super("Database Test Frame");
-		    qtm = new QueryTableModel();
-		    JTable table = new JTable(qtm);
-
-		    JButton jb = new JButton("Search");
-		    jb.addActionListener(new ActionListener() {
-		      public void actionPerformed(ActionEvent e) {
-		        qtm.setQuery(queryField.getText().trim());
-		      }
-		    });
-		    p1.add(jb);
-		    getContentPane().add(p1, BorderLayout.NORTH);
-		    getContentPane().add(scrollpane, BorderLayout.CENTER);*/
 	}
 
 	/**
@@ -151,7 +133,6 @@ public class MainWindow {
 				  
 				}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		frmHeartstone.getContentPane().setLayout(new BorderLayout(5, 0));
@@ -172,8 +153,6 @@ public class MainWindow {
 			panel_7.setLayout(new BorderLayout(0, 0));
 			
 			list = new JList(lista.toArray());
-			//list.setBorder(new TitledBorder(new MatteBorder(4, 4, 4, 4, (Color) new Color(51, 153, 255)), "Ladder", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
-			//panel.add(list, BorderLayout.NORTH);
 			
 			JScrollPane scrollPane_1 = new JScrollPane(list);
 			panel_7.add(scrollPane_1);
@@ -235,8 +214,6 @@ public class MainWindow {
 			
 			scrollPane = new JScrollPane(tableCard);
 			panel_6.add(scrollPane, BorderLayout.CENTER);
-			
-			//panel_6.add(tableCard);
 	}
 
 	public JFrame getJFrame() {
