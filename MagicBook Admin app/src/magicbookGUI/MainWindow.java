@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
@@ -55,7 +56,7 @@ public class MainWindow {
 
 	private JFrame frmHeartstone;
 	private JTable tableCard;
-	private JList list;
+	private JTable tablePlayer;
 	private JButton btnUpdateDatabase;
 	private JButton btnUndo;
 	private JButton btnSaveChanges;
@@ -97,18 +98,19 @@ public class MainWindow {
 		conn = connection;
 	}
 	
-	TableModel tm;
+	TableModel tmCard;
+	TableModel tmPlayer;
 	private JPanel panel_6;
 	private JScrollPane scrollPane;
 	private JScrollPane scrollPane_1;
 	private JPanel panel_7;
-	private void initializeCardTable()
+	private TableModel initializeTableModel(String query)
 	{
-		tm = new TableModel();
+		TableModel tm = new TableModel();
 		
 		tm.setConnection(connect);
-		tm.executeQuery("select * from card");
-		
+		tm.executeQuery(query);
+		return tm;
 	}
 
 	/**
@@ -120,25 +122,11 @@ public class MainWindow {
 		getJFrame().setBackground(new Color(95, 158, 160));
 		getJFrame().setBounds(100, 100, 864, 508);
 		getJFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		List <String> lista;
-		lista= new ArrayList<String>();
-		
-		ResultSet rs = connect.query("select * from `players in ladder`");
-		
-		
-		try {
-			while(rs.next()){
-				  lista.add(rs.getString("Username"));
-				  
-				}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-		frmHeartstone.getContentPane().setLayout(new BorderLayout(5, 0));
+		frmHeartstone.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
 		frmHeartstone.getContentPane().add(panel, BorderLayout.EAST);
+		
 		panel.setLayout(new BorderLayout(0, 0));
 			
 			panel_3 = new JPanel();
@@ -152,9 +140,12 @@ public class MainWindow {
 			panel.add(panel_7, BorderLayout.CENTER);
 			panel_7.setLayout(new BorderLayout(0, 0));
 			
-			list = new JList(lista.toArray());
 			
-			JScrollPane scrollPane_1 = new JScrollPane(list);
+			tmPlayer = this.initializeTableModel("select * from `players in ladder`");
+			tablePlayer = new JTable(tmPlayer);
+			setMaxColumnWidthPlayerTable();
+			
+			JScrollPane scrollPane_1 = new JScrollPane(tablePlayer);
 			panel_7.add(scrollPane_1);
 			panel_7.setBorder(new TitledBorder(new MatteBorder(4, 4, 4, 4, (Color) new Color(51, 153, 255)), "Ladder", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
 			JPanel panel_1 = new JPanel();
@@ -178,8 +169,8 @@ public class MainWindow {
 					d.start();
 					
 					//adding rows into the window table
-					initializeCardTable();
-					tableCard = new JTable(tm);
+					tmCard = initializeTableModel("select * from card");
+					tableCard = new JTable(tmCard);
 				}
 			});
 			btnUpdateDatabase.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -202,10 +193,10 @@ public class MainWindow {
 				}
 			});
 			
-			initializeCardTable();
-			tableCard = new JTable(tm);
+			tmCard = initializeTableModel("select * from card");
+			tableCard = new JTable(tmCard);
 			
-			setMaxColumnWidth();
+			setMaxColumnWidthCardTable();
 			
 			panel_6 = new JPanel();
 			panel_1.add(panel_6, BorderLayout.CENTER);
@@ -224,7 +215,14 @@ public class MainWindow {
 		this.frmHeartstone = frmHeartstone;
 	}
 	
-	private void setMaxColumnWidth()
+	private void setMaxColumnWidthPlayerTable()
+	{
+		TableColumnModel cm = tablePlayer.getColumnModel();
+		cm.getColumn(0).setMaxWidth(70);
+		cm.getColumn(1).setMaxWidth(30);
+	}
+	
+	private void setMaxColumnWidthCardTable()
 	{
 		TableColumnModel cm = tableCard.getColumnModel();
 		cm.getColumn(0).setMaxWidth(30);
