@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.Box;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JButton;
@@ -14,6 +15,11 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Font;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.SQLType;
+import java.sql.Savepoint;
+import java.sql.Types;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -31,8 +37,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.ListSelectionModel;
 
 public class MainWindow {
-	
-	public static Connection conn;
 
 	private JFrame frmHeartstone;
 	private JTable tableCard;
@@ -70,12 +74,6 @@ public class MainWindow {
 	public MainWindow(DBConnect connect) {
 		this.connect = connect;
 		initialize();
-		
-	}
-	
-	public MainWindow(Connection connection){
-		initialize();
-		conn = connection;
 	}
 	
 	TableModel tmCard;
@@ -91,6 +89,13 @@ public class MainWindow {
 		tm.setConnection(connect);
 		tm.executeQuery(query);
 		return tm;
+	}
+	
+	private boolean isItNull(String parameter){
+		if (parameter != null && !parameter.isEmpty())
+			return true;
+		else
+			return false;
 	}
 
 	/**
@@ -129,7 +134,6 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				CardCollector d = new CardCollector(connect);
 				d.start();
-				
 				//adding rows into the window table
 				tmCard = initializeTableModel("select * from card");
 				tableCard = new JTable(tmCard);
@@ -160,6 +164,80 @@ public class MainWindow {
 		btnUndo.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnSaveChanges.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				int row = 0;
+				Savepoint save = null;
+				
+				try {
+					save = connect.setSavepoint();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				
+				try{
+					String query = "Update card set name=?, hero=?, rarity=?, type=?, subtype=?, cost=?, attack=?, "
+							+ "hp=?, picture=? where card.id=?";
+					
+					PreparedStatement ps = connect.getPreparedStatement(query);
+					ArrayList<ArrayList<Object>> data = tmCard.getdata();
+				
+					//adding rows into batch
+					for(row =0; row<data.size(); row++)
+					{
+						System.out.println("updating row number: " + (row+1));
+						int id = Integer.valueOf((String) data.get(row).get(0));
+						String name = (String) data.get(row).get(1);
+						
+						//convert to integer later, need to check for null
+						String hero = (String) data.get(row).get(2);
+						String rarity = (String) data.get(row).get(3);
+						String type =(String) data.get(row).get(4);
+						
+						//need to check for null
+						String subtype = (String) data.get(row).get(5);
+						String cost = (String) data.get(row).get(6);
+						String attack = (String) data.get(row).get(7);
+						String hp = (String) data.get(row).get(8);
+						//
+						
+						String picture = (String)data.get(row).get(9);
+						
+						ps.setString(1, name); 
+					
+						if(isItNull(hero)) ps.setInt(2, Integer.valueOf(hero)); 
+						else ps.setNull(2, Types.INTEGER);
+						
+						ps.setString(3, rarity);
+						ps.setString(4, type);
+						
+						if(isItNull(subtype)) ps.setString(5, subtype);
+						else ps.setNull(5, Types.VARCHAR);
+						
+						if(isItNull(cost)) ps.setInt(6, Integer.valueOf(cost));
+						else ps.setInt(6, 0);
+						
+						if(isItNull(attack)) ps.setInt(7, Integer.valueOf(attack));
+						else ps.setInt(7, 0);
+						
+						if(isItNull(hp)) ps.setInt(8, Integer.valueOf(hp));
+						else ps.setInt(8, 0);
+						
+						ps.setString(9, picture);
+						ps.setInt(10, id);
+						
+						ps.addBatch();
+					}
+					
+					//executing
+					ps.executeBatch();
+					connect.commit();
+				}
+				catch(Exception e)
+				{
+					if(save != null)
+						connect.rollback(save);
+					JOptionPane.showMessageDialog(frmHeartstone, "There was an error inserting rows into database:\n Message: "
+										+ e.getMessage() + "\nCorrect the error and try again.");
+				}
 			}
 		});
 		
@@ -229,7 +307,8 @@ public class MainWindow {
 		tableCard = new JTable(tmCard);
 		tableCard.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
-		/*tableCard.getModel().addTableModelListener(new TableModelListener(){
+		/*
+		tableCard.getModel().addTableModelListener(new TableModelListener(){
 			@Override
 			public void tableChanged(TableModelEvent arg0) {
 				//tableCard.setValueAt("ble", arg0.getFirstRow(), arg0.getColumn());

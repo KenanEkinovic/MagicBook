@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 06, 2014 at 05:56 PM
+-- Generation Time: Dec 07, 2014 at 10:07 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -91,7 +91,7 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `subtype`, `cost`, `
 (8, 'Blessing of Might', 8, 'Free', 'Spell', NULL, 1, 0, 0, 'http://hydra-media.cursecdn.com/hearthstone.gamepedia.com/thumb/4/42/Blessing_of_Might%28394%29.png/184px-Blessing_of_Might%28394%29.png?version=03bff4e75f023ccd6eacc9be146efa0e'),
 (9, 'Bloodfen Raptor', NULL, 'Free', 'Minion', 'Beast', 2, 3, 2, 'http://hydra-media.cursecdn.com/hearthstone.gamepedia.com/thumb/2/2c/Bloodfen_Raptor%28576%29.png/184px-Bloodfen_Raptor%28576%29.png?version=327897086c9899b62df124e9a93a78b2'),
 (10, 'Boulderfist Ogre', NULL, 'Free', 'Minion', NULL, 6, 6, 7, 'http://hydra-media.cursecdn.com/hearthstone.gamepedia.com/thumb/f/fd/Boulderfist_Ogre%2860%29.png/184px-Boulderfist_Ogre%2860%29.png?version=c3185423b91e6dd05671df845f87021d'),
-(11, 'Charge (card)', 2, 'Free', 'Spell', NULL, 3, 0, 0, 'http://hydra-media.cursecdn.com/hearthstone.gamepedia.com/thumb/a/ab/Charge%28646%29.png/184px-Charge%28646%29.png?version=38fd96e5d57a7879794c3ecb997d8032'),
+(11, 'Charge', 2, 'Free', 'Spell', NULL, 3, 0, 0, 'http://hydra-media.cursecdn.com/hearthstone.gamepedia.com/thumb/a/ab/Charge%28646%29.png/184px-Charge%28646%29.png?version=38fd96e5d57a7879794c3ecb997d8032'),
 (12, 'Claw', 5, 'Free', 'Spell', NULL, 1, 0, 0, 'http://hydra-media.cursecdn.com/hearthstone.gamepedia.com/thumb/2/2c/Claw%28532%29.png/184px-Claw%28532%29.png?version=d3167b223a1685b2aa7e9ef5b62efb26'),
 (13, 'Deadly Poison', 4, 'Free', 'Spell', NULL, 1, 0, 0, 'http://hydra-media.cursecdn.com/hearthstone.gamepedia.com/thumb/9/96/Deadly_Poison%2887%29.png/184px-Deadly_Poison%2887%29.png?version=05a5590f45a53895524e57ac99e740d3'),
 (14, 'Drain Life', 6, 'Free', 'Spell', NULL, 3, 0, 0, 'http://hydra-media.cursecdn.com/hearthstone.gamepedia.com/thumb/5/50/Drain_Life%28332%29.png/184px-Drain_Life%28332%29.png?version=427ec1dbd391b7e1d5fa3396d0b50f54'),

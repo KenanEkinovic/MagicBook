@@ -1,5 +1,7 @@
 package magicbookGUI;
 
+import java.sql.PreparedStatement;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,7 +13,7 @@ public class DBConnect {
 	static private Connection conn;
 	private Statement st;
 	private ResultSet rs;
-	
+	private PreparedStatement ps;
 
 	
 	static String driver = "com.mysql.jdbc.Driver";
@@ -33,7 +35,40 @@ public class DBConnect {
 		{
 			System.out.println("Error " + e);
 		}
-
+	}
+	
+	public Savepoint setSavepoint() throws SQLException{
+			conn.setAutoCommit(false);
+			return conn.setSavepoint();
+	}
+	
+	public void commit(){
+		try {
+			conn.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void rollback(Savepoint savepoint)
+	{
+		try {
+			conn.rollback(savepoint);
+			conn.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public PreparedStatement getPreparedStatement(String query) throws SQLException
+	{
+		conn.setAutoCommit(false);
+		ps = conn.prepareStatement(query);
+		return ps;
+	}
+	public void closePreparedStatement() throws SQLException{
+		ps.close();
+		conn.setAutoCommit(true);
 	}
 	
 	public void closeConnection()
