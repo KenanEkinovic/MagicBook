@@ -137,8 +137,9 @@ public class MainWindow {
 				CardCollector d = new CardCollector(connect);
 				d.start();
 				//adding rows into the window table
-				tmCard = initializeTableModel("select * from card");
-				tableCard = new JTable(tmCard);
+				tmCard.executeQuery("select * from card");
+				//let the table know its model changed
+				tmCard.fireTableDataChanged();
 			}
 		});
 		btnUpdateDatabase.setFont(new Font("Tahoma", Font.PLAIN, 11));
