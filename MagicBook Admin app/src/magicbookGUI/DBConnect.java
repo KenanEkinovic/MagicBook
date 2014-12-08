@@ -36,7 +36,29 @@ public class DBConnect {
 			System.out.println("Error " + e);
 		}
 	}
-	
+	public void setAutoCommit(boolean value){
+		try {
+			conn.setAutoCommit(value);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public boolean getAutoCommit(){
+		try {
+			return conn.getAutoCommit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
+	public Statement getStatement(){
+		return st;
+	}
+	public ResultSet getResultSet(){
+		return rs;
+	}
 	public Savepoint setSavepoint() throws SQLException{
 			conn.setAutoCommit(false);
 			return conn.setSavepoint();

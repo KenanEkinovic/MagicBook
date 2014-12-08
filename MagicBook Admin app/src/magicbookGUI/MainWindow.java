@@ -16,9 +16,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLType;
 import java.sql.Savepoint;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 
@@ -230,6 +232,7 @@ public class MainWindow {
 					//executing
 					ps.executeBatch();
 					connect.commit();
+					connect.closePreparedStatement();
 				}
 				catch(Exception e)
 				{
@@ -270,9 +273,37 @@ public class MainWindow {
 			btnSendMessage.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					ArrayList<String> recipients = new ArrayList<String>();
-					recipients.add("nanekinovic@gmail.com");
-					EmailWindow ew = new EmailWindow(recipients);
-					ew.open();
+
+					int[] rowIndex = tablePlayer.getSelectedRows();
+					int rowCount = tablePlayer.getSelectedRowCount();
+					
+					Savepoint save = null;
+					try{
+						save = connect.setSavepoint();
+						
+						PreparedStatement ps = connect.getPreparedStatement("select email from player where username=?");
+						
+						for(int i=0; i<rowCount; i++)
+						{
+							String playerUsername = (String) tablePlayer.getValueAt(rowIndex[i], 0);
+							ps.setString(1, playerUsername);
+							ResultSet rs = ps.executeQuery();
+							rs.next();
+							recipients.add(rs.getString(1));
+						}
+						
+						EmailWindow ew = new EmailWindow(recipients);
+						connect.closePreparedStatement();
+						ew.open();
+					}
+					catch(Exception exc)
+					{
+						exc.printStackTrace();
+						if(save != null)
+							connect.rollback(save);
+					}
+					connect.setAutoCommit(true);
+					
 				}
 			});
 			panel_3.add(btnSendMessage);
