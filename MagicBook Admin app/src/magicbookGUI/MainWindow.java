@@ -267,6 +267,14 @@ public class MainWindow {
 			panel.add(panel_3, BorderLayout.SOUTH);
 			
 			btnSendMessage = new JButton("Send message");
+			btnSendMessage.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ArrayList<String> recipients = new ArrayList<String>();
+					recipients.add("nanekinovic@gmail.com");
+					EmailWindow ew = new EmailWindow(recipients);
+					ew.open();
+				}
+			});
 			panel_3.add(btnSendMessage);
 			btnSendMessage.setFont(new Font("Tahoma", Font.PLAIN, 11));
 			
