@@ -21,8 +21,6 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
-
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;

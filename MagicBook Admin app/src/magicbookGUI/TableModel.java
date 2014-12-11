@@ -42,7 +42,7 @@ class TableModel extends AbstractTableModel {
 	public int getRowCount() {
 		return tableData.size();
 	}
-	  
+	
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		if(columnIndex == 0)

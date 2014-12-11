@@ -14,13 +14,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Font;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Savepoint;
-import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 
@@ -31,9 +28,8 @@ import java.awt.BorderLayout;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.BoxLayout;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.ListSelectionModel;
@@ -137,7 +133,7 @@ public class MainWindow {
 				CardCollector d = new CardCollector(connect);
 				d.start();
 				//adding rows into the window table
-				tmCard.executeQuery("select * from card");
+				tmCard.executeQuery("select * from card order by name asc");
 				//let the table know its model changed
 				tmCard.fireTableDataChanged();
 			}
@@ -158,7 +154,7 @@ public class MainWindow {
 		btnUndo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//get valid data from the database
-				tmCard.executeQuery("select * from card");
+				tmCard.executeQuery("select * from card order by name asc");
 				//let the table know its model changed
 				tmCard.fireTableDataChanged();
 			}
@@ -342,17 +338,11 @@ public class MainWindow {
 	}
 	public void initializeCardTable()
 	{
-		tmCard = initializeTableModel("select * from card");
+		tmCard = initializeTableModel("select * from card order by name asc");
 		tmCard.setEditable(true);
 		tableCard = new JTable(tmCard);
+		tableCard.setAutoCreateRowSorter(true);
 		tableCard.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-		/*
-		tableCard.getModel().addTableModelListener(new TableModelListener(){
-			@Override
-			public void tableChanged(TableModelEvent arg0) {
-				//tableCard.setValueAt("ble", arg0.getFirstRow(), arg0.getColumn());
-			}});*/
 		
 		setMaxColumnWidthCardTable();
 	}

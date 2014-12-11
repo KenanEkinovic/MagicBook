@@ -2,7 +2,6 @@ package magicbookGUI;
 
 import java.util.Properties;
 
-import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Session;
 import javax.mail.Message;
