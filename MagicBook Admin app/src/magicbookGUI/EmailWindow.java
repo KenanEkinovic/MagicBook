@@ -87,7 +87,7 @@ public class EmailWindow {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 602, 359);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
 		
 		JPanel panel = new JPanel();
