@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 11, 2014 at 07:08 PM
+-- Generation Time: Dec 27, 2014 at 07:37 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -30,6 +30,18 @@ DROP PROCEDURE IF EXISTS `availible_cards`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `availible_cards`(IN `hero_id` INT)
     NO SQL
 select card.name, hero.id from card left join hero on card.hero = hero.id where hero.id is null or hero.id = hero_id ORDER BY `hero`.`id` DESC$$
+
+--
+-- Functions
+--
+DROP FUNCTION IF EXISTS `login`$$
+CREATE DEFINER=`root`@`localhost` FUNCTION `login`(`p0` VARCHAR(45), `p1` VARCHAR(45)) RETURNS int(11) unsigned
+if EXISTS(select * from player where username = @p0 and password = @p1)
+   then
+      return 1;
+   else
+      return 0; 
+   end if$$
 
 DELIMITER ;
 
@@ -700,7 +712,7 @@ CREATE TABLE IF NOT EXISTS `player` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `id_2` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=25 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
 
 --
 -- Dumping data for table `player`
