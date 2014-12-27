@@ -22,6 +22,12 @@ public class ApiConnector {
         return ja;
     }
 
+    public JSONArray Register(String username, String password, String email){
+        String extension = "?register&username="+ username + "&password="+password+"&email="+email;
+        do_it(extension);
+        return ja;
+    }
+
     private void do_it(String extension){
         try{
             DefaultHttpClient httpClient = new DefaultHttpClient();
