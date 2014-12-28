@@ -136,6 +136,9 @@ public class MainWindow {
 				tmCard.executeQuery("select * from card order by name asc");
 				//let the table know its model changed
 				tmCard.fireTableDataChanged();
+				
+				//incrementing database version
+				incrementVersion();
 			}
 		});
 		btnUpdateDatabase.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -230,6 +233,7 @@ public class MainWindow {
 					ps.executeBatch();
 					connect.commit();
 					connect.closePreparedStatement();
+					incrementVersion();
 				}
 				catch(Exception e)
 				{
@@ -368,5 +372,18 @@ public class MainWindow {
 		cm.getColumn(6).setMaxWidth(33);
 		cm.getColumn(7).setMaxWidth(40);
 		cm.getColumn(8).setMaxWidth(33);
+	}
+	
+	private void incrementVersion(){
+		try {
+			ResultSet rs = connect.query("select version from db_version where id=1");
+			rs.first();
+			int version;
+			version = rs.getInt(1);
+			version++;
+			connect.executeUpdate("Update db_version set version="+version+" where id=1");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

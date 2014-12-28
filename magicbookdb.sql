@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 27, 2014 at 07:37 PM
+-- Generation Time: Dec 28, 2014 at 08:39 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -27,9 +27,11 @@ DELIMITER $$
 -- Procedures
 --
 DROP PROCEDURE IF EXISTS `availible_cards`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `availible_cards`(IN `hero_id` INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `availible_cards`(IN `p0` INT)
     NO SQL
-select card.name, hero.id from card left join hero on card.hero = hero.id where hero.id is null or hero.id = hero_id ORDER BY `hero`.`id` DESC$$
+select card.id, card.name, card.hero, card.rarity, card.type, card.subtype, card.cost, card.attack, card.hp, card.picture
+from card left join hero on card.hero = hero.id 
+where hero.id is null or hero.id = @p0 ORDER BY `hero`.`id` DESC$$
 
 --
 -- Functions
@@ -648,6 +650,26 @@ CREATE TABLE IF NOT EXISTS `cardindeck` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `db_version`
+--
+
+DROP TABLE IF EXISTS `db_version`;
+CREATE TABLE IF NOT EXISTS `db_version` (
+  `id` int(11) NOT NULL,
+  `version` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `db_version`
+--
+
+INSERT INTO `db_version` (`id`, `version`) VALUES
+(1, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `deck`
 --
 
@@ -711,8 +733,9 @@ CREATE TABLE IF NOT EXISTS `player` (
   `number_of_losses` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `username` (`username`),
   KEY `id_2` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=25 ;
 
 --
 -- Dumping data for table `player`
