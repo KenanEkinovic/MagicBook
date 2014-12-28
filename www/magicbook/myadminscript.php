@@ -30,6 +30,31 @@ else if(isset($_GET["register"]))
 	else
 		echo '[{"register":"0"}]';
 }
+else if(isset($_GET["cards"]))
+{
+	$query = sprintf("SELECT * from card;");
+	$res1=mysqli_query($conn, $query);
+
+	while($row= mysqli_fetch_assoc($res1)){
+		$output[]=$row;
+	}
+
+	print(json_encode($output));
+}
+else if(isset($_GET["cards_from_hero"]))
+{
+	$query = sprintf("select card.id, card.name, card.hero, card.rarity, card.type, card.subtype, card.cost,
+			 card.attack, card.hp, card.picture
+			 from card left join hero on card.hero = hero.id 
+			 where hero.id is null or hero.id = '%s' ORDER BY `hero`.`id` DESC", $_GET['cards_from_hero']);
+	$res1=mysqli_query($conn, $query);
+
+	while($row= mysqli_fetch_assoc($res1)){
+		$output[]=$row;
+	}
+
+	print(json_encode($output));
+}
 
 mysqli_close($conn);
 

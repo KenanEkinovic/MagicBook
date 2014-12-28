@@ -16,6 +16,16 @@ public class ApiConnector {
     static HttpEntity httpEntity = null;
     static JSONArray ja = null;
 
+    public JSONArray Cards(Integer hero){
+        String extension = "";
+        if(hero != null)
+             extension = "";
+        else
+            extension = "?cards" ; //getting all cards
+        do_it(extension);
+        return ja;
+    }
+
     public JSONArray Login(String username, String password){
         String extension = "?login&username=" + username + "&password=" + password;
         do_it(extension);

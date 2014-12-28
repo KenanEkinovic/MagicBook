@@ -1,0 +1,160 @@
+package etf.magicbook;
+
+import android.app.Activity;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+/**
+ * Created by Kenan on 27.12.2014.
+ */
+public class CardList extends Fragment {
+
+    int id;
+    String name;
+    String hero;
+    String rarity;
+    String type;
+    String subtype;
+    String cost;
+    String attack;
+    String hp;
+    String pictureURL;
+    LinearLayout main_card_layout;
+
+    private OnFragmentInteractionListener mListener;
+
+    public static CardList newInstance() {
+        CardList fragment = new CardList();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public CardList() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_card_list, container, false);
+    }
+
+    public void onButtonPressed(Uri uri) {
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        main_card_layout = (LinearLayout) getActivity().findViewById(R.id.main_card_layout);
+        new GetCards(this).execute(new ApiConnector());
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            //    throw new ClassCastException(activity.toString()
+            //          + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnFragmentInteractionListener {
+        public void onFragmentInteraction(Uri uri);
+    }
+
+
+    private class GetCards extends AsyncTask<ApiConnector,Long,JSONArray>{
+        CardList parent;
+        GetCards(CardList l){
+            parent = l;
+        }
+
+        @Override
+        protected JSONArray doInBackground(ApiConnector... params) {
+            return params[0].Cards(null);
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray){
+            final DatabaseHandler dbh = new DatabaseHandler(parent.getActivity());
+            JSONObject jo = null;
+            try{
+                for(int i=0; i<jsonArray.length(); i++)
+                {
+                    jo = jsonArray.getJSONObject(i);
+                    id = Integer.valueOf(jo.getString("id"));
+                    name = jo.getString("name");
+                    hero = jo.getString("hero");
+                    switch (hero){
+                        case "1":{hero = "Priest"; break;}
+                        case "2":{hero = "Warrior"; break;}
+                        case "3":{hero = "Mage"; break;}
+                        case "4":{hero = "Rogue"; break;}
+                        case "5":{hero = "Druid"; break;}
+                        case "6":{hero = "Warlock"; break;}
+                        case "7":{hero = "Hunter"; break;}
+                        case "8":{hero = "Paladin"; break;}
+                        case "9":{hero = "Shaman"; break;}
+                        default: hero = "null";
+                    }
+                    rarity = jo.getString("rarity");
+                    type = jo.getString("type");
+                    subtype = jo.getString("subtype");
+                    cost = jo.getString("cost");
+                    attack = jo.getString("attack");
+                    hp = jo.getString("hp");
+                    pictureURL = jo.getString("picture");
+                    Card c = new Card(id, name.replace(' ','_'), hero, type, subtype, rarity, cost, attack, hp, pictureURL);
+                    dbh.createCard(c); //putting a card into batch
+
+
+                    Button btnCard = new Button(parent.getActivity());
+                    btnCard.setText(name);
+                    btnCard.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Button btn = (Button) v;
+                            Card c = dbh.getCard(btn.getText().toString());
+                            CardDialog cd = new CardDialog(c);
+                            //cd.setMyCard(c);
+                            //cd.setParameters(name,hero,rarity,type,subtype,cost,attack,hp,pictureURL);
+                            cd.show(getFragmentManager(), "CardDialog");
+                        }
+                    });
+                    main_card_layout.addView(btnCard);
+                }
+                dbh.executeCardBatch();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+}

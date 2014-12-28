@@ -2,5 +2,7 @@
 <resources>
 
     <string name="app_name">MagicBook</string>
+    <string name="title_activity_main">MagicBook</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

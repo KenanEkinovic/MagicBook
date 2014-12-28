@@ -1,6 +1,8 @@
 package etf.magicbook;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import org.w3c.dom.Text;
 
 
 public class LogIn extends ActionBarActivity {
+    SQLiteDatabase db;
 
     private Button buttonLogin;
     private EditText txtUsername;
@@ -69,21 +72,6 @@ public class LogIn extends ActionBarActivity {
         });
     }
 
-        /*String s = "";
-        for(int i=0; i<jsonArray.length(); i++){
-            JSONObject jo = null;
-            try{
-                jo = jsonArray.getJSONObject(i);
-                s = s + jo.getString("username") + " " + jo.getString("password");
-
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-        this.test.setText(s);*/
-
     private class GetLogin extends AsyncTask<ApiConnector,Long,JSONArray>
     {
         LogIn parent;
@@ -112,6 +100,11 @@ public class LogIn extends ActionBarActivity {
             if(s.equals("1")) //login ok
             {
                 Toast.makeText(parent, "Wellcome, "+ txtUsername.getText().toString(), Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(reference, MainActivity.class);
+                reference.startActivity(i);
+                //closing the keyboard
+                InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
             else
             {
