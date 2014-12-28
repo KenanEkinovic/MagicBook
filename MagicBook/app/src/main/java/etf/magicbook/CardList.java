@@ -5,10 +5,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import org.json.JSONArray;
@@ -30,6 +33,7 @@ public class CardList extends Fragment {
     String hp;
     String pictureURL;
     LinearLayout main_card_layout;
+    EditText txtSearchCards;
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,6 +69,35 @@ public class CardList extends Fragment {
 
         main_card_layout = (LinearLayout) getActivity().findViewById(R.id.main_card_layout);
         new GetCards(this).execute(new ApiConnector());
+
+        txtSearchCards = (EditText) getActivity().findViewById(R.id.txtSearchCards);
+        txtSearchCards.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                for(int i=0; i<main_card_layout.getChildCount(); i++)
+                {
+                    Button b = (Button) main_card_layout.getChildAt(i);
+                    String str = b.getText().toString();
+                    str = str.toLowerCase();
+                    String ss = s.toString();
+                    ss.toLowerCase();
+                    if(str.contains(ss))
+                        b.setVisibility(View.VISIBLE);
+                    else
+                        b.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Override
@@ -102,7 +135,7 @@ public class CardList extends Fragment {
 
         @Override
         protected void onPostExecute(JSONArray jsonArray){
-            final DatabaseHandler dbh = new DatabaseHandler(parent.getActivity());
+            final DatabaseHandler dbh = DatabaseHandler.getInstance(parent.getActivity());
             JSONObject jo = null;
             try{
                 for(int i=0; i<jsonArray.length(); i++)
