@@ -24,7 +24,9 @@ import org.w3c.dom.Text;
 public class LogIn extends ActionBarActivity {
     SQLiteDatabase db;
 
+    Intent main_activity;
     public static String PLAYER_USERNAME;
+    public static int PLAYER_ID;
 
     private Button buttonLogin;
     private EditText txtUsername;
@@ -99,16 +101,17 @@ public class LogIn extends ActionBarActivity {
                     e.printStackTrace();
                 }
 
-            if(s.equals("1")) //login ok
+            if(!s.equals("0")) //login ok
             {
                 Toast.makeText(parent, "Wellcome, "+ txtUsername.getText().toString(), Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(reference, MainActivity.class);
-                reference.startActivity(i);
+                main_activity = new Intent(reference, MainActivity.class);
+                reference.startActivity(main_activity);
                 //closing the keyboard
                 InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 //storing player username
                 PLAYER_USERNAME = txtUsername.getText().toString();
+                PLAYER_ID = Integer.parseInt(s);
             }
             else
             {
@@ -148,7 +151,7 @@ public class LogIn extends ActionBarActivity {
                 e.printStackTrace();
             }
 
-            if(s.equals("1")) //register ok
+            if(!s.equals("0")) //register ok
             {
                 Toast.makeText(parent, "You have been successfully registered, "+ txtNewUsername.getText().toString(), Toast.LENGTH_SHORT).show();
             }

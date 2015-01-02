@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2015 at 01:05 AM
+-- Generation Time: Jan 02, 2015 at 04:47 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -638,15 +638,9 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `subtype`, `cost`, `
 DROP TABLE IF EXISTS `cardindeck`;
 CREATE TABLE IF NOT EXISTS `cardindeck` (
   `id` int(11) NOT NULL,
-  `deck` int(11) DEFAULT NULL,
-  `card` int(11) DEFAULT NULL,
   `player` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`),
-  KEY `cardindeck_card_idx` (`card`),
-  KEY `cardindeck_deck_idx` (`deck`),
-  KEY `id_2` (`id`),
-  KEY `player` (`player`)
+  `deck` int(11) DEFAULT NULL,
+  `card` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -683,8 +677,6 @@ CREATE TABLE IF NOT EXISTS `deck` (
   `player` int(11) DEFAULT NULL,
   `number_of_wins` int(11) DEFAULT NULL,
   `number_of_losses` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`),
   KEY `hero_idx` (`hero`),
   KEY `player_idx` (`player`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -793,14 +785,6 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `cardindeck`
---
-ALTER TABLE `cardindeck`
-  ADD CONSTRAINT `cardindeck_ibfk_1` FOREIGN KEY (`player`) REFERENCES `player` (`id`),
-  ADD CONSTRAINT `cardindeck_card` FOREIGN KEY (`card`) REFERENCES `card` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `cardindeck_deck` FOREIGN KEY (`deck`) REFERENCES `deck` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `deck`

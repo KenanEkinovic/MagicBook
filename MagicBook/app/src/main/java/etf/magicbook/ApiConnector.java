@@ -16,6 +16,23 @@ public class ApiConnector {
     static HttpEntity httpEntity = null;
     static JSONArray ja = null;
 
+    public JSONArray createDeck(Deck d){
+        String hero = d.getHero();
+        int hero_id=0;
+        switch (hero){
+            case "Priest":{hero_id = 1; break;}
+            case "Warrior":{hero_id = 2; break;}
+            case "Mage":{hero_id = 3; break;}
+            case "Rogue":{hero_id = 4; break;}
+            case "Druid":{hero_id = 5; break;}
+            case "Warlock":{hero_id = 6; break;}
+            case "Hunter":{hero_id = 7; break;}
+            case "Paladin":{hero_id = 8; break;}
+            case "Shaman":{hero_id = 9; break;}
+        }
+        do_it("?newDeck&id="+d.getId()+"&name="+d.getName()+"&hero="+hero_id+"&player_id="+LogIn.PLAYER_ID);
+        return ja;
+    }
     public JSONArray Decks(String username){
         do_it("?player_decks&username="+username);
         return ja;

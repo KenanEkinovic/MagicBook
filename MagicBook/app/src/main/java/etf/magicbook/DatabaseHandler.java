@@ -171,7 +171,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         finally
         {

@@ -80,18 +80,24 @@ public class DeckList extends Fragment {
             public void onClick(View v) {
                 //Toast.makeText(v.getContext(), newDeckName.getText().toString() + " " + spinnerHero.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
                 DatabaseHandler dbh = DatabaseHandler.getInstance(v.getContext());
-                Deck d = new Deck(1, LogIn.PLAYER_USERNAME, newDeckName.getText().toString(), spinnerHero.getSelectedItem().toString(), 0,0);
-                dbh.makeNewDeck(d);
-
-                //refresh deck list
-                main_deck_layout.removeAllViews();
-                //ArrayList<Deck> allDecks = dbh.getAllDecks();
                 ArrayList<Deck> allDecks = dbh.getAllDecks();
-                for(int j =0; j<allDecks.size(); j++) {
-                    Button btnNew = new Button(v.getContext());
-                    btnNew.setText(allDecks.get(j).getHero() + "\n" + allDecks.get(j).getName());
-                    main_deck_layout.addView(btnNew);
+                if(allDecks.size() < 9) {
+                    Deck d = new Deck(allDecks.size(), LogIn.PLAYER_USERNAME, newDeckName.getText().toString(), spinnerHero.getSelectedItem().toString(), 0, 0);
+                    dbh.makeNewDeck(d); // creating the deck in the local database
+
+                    new CreateDeck(d).execute(new ApiConnector()); // creating the deck in the main database
+                    allDecks = dbh.getAllDecks();
+
+                        //refresh deck list
+                        main_deck_layout.removeAllViews();
+                        for (int j = 0; j < allDecks.size(); j++) {
+                            Button btnNew = new Button(v.getContext());
+                            btnNew.setText(allDecks.get(j).getHero() + "\n" + allDecks.get(j).getName());
+                            main_deck_layout.addView(btnNew);
+                        }
                 }
+                else
+                    Toast.makeText(getActivity().getApplicationContext(), "You can not have more than 9 decks", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -123,6 +129,33 @@ public class DeckList extends Fragment {
 
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(Uri uri);
+    }
+
+    private class CreateDeck extends AsyncTask<ApiConnector, Long, JSONArray>{
+        Deck d;
+        CreateDeck(Deck d){
+            this.d = d;
+        }
+
+        @Override
+        protected JSONArray doInBackground(ApiConnector... params) {
+            return params[0].createDeck(d);
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray) {
+            JSONObject jo = null;
+            try{
+                jo = jsonArray.getJSONObject(0);
+                String result = jo.getString("newDeck");
+
+                if(result.equals("0")){ //failed to create new deck
+                    Toast.makeText(getActivity().getApplicationContext(), "Failed to create new deck", Toast.LENGTH_SHORT).show();
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 
     private class GetDecks extends AsyncTask<ApiConnector, Long, JSONArray>{
