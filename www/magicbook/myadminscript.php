@@ -10,7 +10,37 @@ mysqli_select_db($conn, "magicbookdb");
 
 $query = "";
 
-if(isset($_GET["newDeck"]))
+if(isset($_GET["insertCardInDeck"]))
+{
+	$query = sprintf("INSERT INTO cardindeck VALUES (%d, %d, %d)", $_GET["player_id"], $_GET["deck_id"], $_GET["card_id"]);
+	if($conn->query($query) == TRUE)
+	{
+		if(!isset($_GET["doubleInsert"]))	
+			echo '[{"cardInserted":"1"}]';
+	}
+	else
+		echo '[{"cardInserted":"0"}]';
+
+	if(isset($_GET["doubleInsert"]))
+	{
+		if($conn->query($query) == TRUE)
+			echo '[{"cardInserted":"2"}]';
+		else
+			echo '[{"cardInserted":"0"}]';
+	}
+}
+else if(isset($_GET["deleteCardFromDeck"]))
+{
+	$query = sprintf("DELETE FROM cardindeck WHERE player=%d AND deck=%d AND card=%d", $_GET["player_id"], $_GET["deck_id"], $_GET["card_id"]);
+	if($conn->query($query) == TRUE)
+		echo '[{"cardDeleted":"1"}]';
+	else
+		echo '[{"cardDeleted":"0"}]';
+}
+else if(isset($_GET["cardsInDeck"]))
+{
+}
+else if(isset($_GET["newDeck"]))
 {
 	$query = sprintf("INSERT INTO deck VALUES(%d,'%s',%d,%d,0,0)", 
 		$_GET["id"], $_GET["name"], $_GET["hero"], $_GET["player_id"]);

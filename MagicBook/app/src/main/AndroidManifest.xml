@@ -12,7 +12,7 @@
         <activity
             android:name=".LogIn"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,11 +23,17 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:parentActivityName=".LogIn"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="etf.magicbook.LogIn" />
+        </activity>
+        <activity
+            android:name=".DeckActivity"
+            android:label="@string/title_activity_deck"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
         </activity>
     </application>
 

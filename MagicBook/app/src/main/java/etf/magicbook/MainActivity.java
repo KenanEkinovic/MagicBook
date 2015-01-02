@@ -82,7 +82,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public Fragment getItem(int position) {
             if(position == 0)
-                return CardList.newInstance();
+                return CardList.newInstance(false, null);
             else
                 return DeckList.newInstance();
         }

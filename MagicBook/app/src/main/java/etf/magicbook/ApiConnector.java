@@ -16,6 +16,19 @@ public class ApiConnector {
     static HttpEntity httpEntity = null;
     static JSONArray ja = null;
 
+    public JSONArray deleteCardFromDeck(Card c, Deck d){
+        String extension = "?deleteCardFromDeck&player_id="+LogIn.PLAYER_ID +"&deck_id="+d.getId()+"&card_id="+c.getId();
+        do_it(extension);
+        return ja;
+    }
+
+    public JSONArray insertCardInDeck(Card c, Deck d, boolean insert2){
+        String extension = "?insertCardInDeck&player_id="+LogIn.PLAYER_ID +"&deck_id="+d.getId()+"&card_id="+c.getId();
+        if(insert2)
+            extension += "&doubleInsert";
+        do_it(extension);
+        return ja;
+    }
     public JSONArray createDeck(Deck d){
         String hero = d.getHero();
         int hero_id=0;
@@ -41,7 +54,7 @@ public class ApiConnector {
     public JSONArray Cards(Integer hero){
         String extension = "";
         if(hero != null)
-             extension = "";
+             extension = "?cards_from_hero="+hero;
         else
             extension = "?cards" ; //getting all cards
         do_it(extension);

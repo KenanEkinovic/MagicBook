@@ -12,8 +12,12 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -27,7 +31,7 @@ import java.net.URL;
 public class CardDialog extends DialogFragment {
 
     Card myCard;
-
+/*
     String txtName;
     String txtHero;
     String txtRarity;
@@ -36,15 +40,21 @@ public class CardDialog extends DialogFragment {
     String txtCost;
     String txtAttack;
     String txtHp;
-    String pictureURL;
+    String pictureURL;*/
+
+    boolean showDeckLayoutOptions;
 
     public void setMyCard(Card c){
         myCard = c;
     }
 
-
+    LinearLayout DeckCardLayout;
     public CardDialog(Card c){myCard = c;}
     public CardDialog(){}
+    
+    public void setDeckLayoutOptions(boolean showDeckLayoutOptions){
+        this.showDeckLayoutOptions = showDeckLayoutOptions;
+    }
 
     @Nullable
     @Override
@@ -52,6 +62,15 @@ public class CardDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_card_layout, null);
         getDialog().setTitle(myCard.getName().replace('_',' '));
         setCancelable(true);
+
+        DeckCardLayout = (LinearLayout) view.findViewById(R.id.cardInDeckOptionsLayout);
+
+        if(showDeckLayoutOptions) {
+            DeckCardLayout.setVisibility(View.VISIBLE);
+            initializeButtonListeners(view);
+        }
+        else
+            DeckCardLayout.setVisibility(View.GONE);
 
         TextView t = (TextView) view.findViewById(R.id.card_name);
         t.setText(myCard.getName().replace('_',' '));
@@ -130,6 +149,33 @@ public class CardDialog extends DialogFragment {
             imageView.setImageBitmap(result);
         }
 
+    }
+
+    private void initializeButtonListeners(View view){
+        Button btnAddCard = (Button) view.findViewById(R.id.btnAddCard);
+        CheckBox checkBoxAdd2Instance2 = (CheckBox) view.findViewById(R.id.checkBoxAdd2);
+        if(myCard.getRarity().equals("Legendary"))
+            checkBoxAdd2Instance2.setEnabled(false);
+        final CheckBox checkBoxAdd2 = (CheckBox) view.findViewById(R.id.checkBoxAdd2);
+        Button btnRemoveCard = (Button) view.findViewById(R.id.btnRemoveCard);
+        btnAddCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeckActivity d = (DeckActivity) getActivity();
+                if(myCard != null)
+                //Toast.makeText(getActivity().getApplicationContext(), ""+myCard.getId(), Toast.LENGTH_SHORT).show();
+                d.onDialogClosed(myCard.getId(), checkBoxAdd2.isChecked(), false);
+                dismiss();
+            }
+        });
+        btnRemoveCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeckActivity d = (DeckActivity) getActivity();
+                d.onDialogClosed(myCard.getId(), false, true);
+                dismiss();
+            }
+        });
     }
 
 }

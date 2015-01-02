@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2015 at 04:47 AM
+-- Generation Time: Jan 03, 2015 at 12:06 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -637,7 +637,6 @@ INSERT INTO `card` (`id`, `name`, `hero`, `rarity`, `type`, `subtype`, `cost`, `
 
 DROP TABLE IF EXISTS `cardindeck`;
 CREATE TABLE IF NOT EXISTS `cardindeck` (
-  `id` int(11) NOT NULL,
   `player` int(11) NOT NULL,
   `deck` int(11) DEFAULT NULL,
   `card` int(11) DEFAULT NULL
@@ -686,7 +685,10 @@ CREATE TABLE IF NOT EXISTS `deck` (
 --
 
 INSERT INTO `deck` (`id`, `name`, `hero`, `player`, `number_of_wins`, `number_of_losses`) VALUES
-(1, 'Test deck 1', 2, 22, 4, 5);
+(1, 'ttt', 1, 22, 0, 0),
+(2, 'bbb', 4, 22, 0, 0),
+(3, 'heh', 2, 22, 0, 0),
+(1, 'gegege', 5, 24, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -736,7 +738,7 @@ CREATE TABLE IF NOT EXISTS `player` (
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `id_2` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=25 ;
 
 --
 -- Dumping data for table `player`

@@ -1,6 +1,9 @@
 package etf.magicbook;
 
 import android.app.Activity;
+import android.view.View.OnClickListener;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -79,10 +82,13 @@ public class DeckList extends Fragment {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(v.getContext(), newDeckName.getText().toString() + " " + spinnerHero.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
-                DatabaseHandler dbh = DatabaseHandler.getInstance(v.getContext());
+                final DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
                 ArrayList<Deck> allDecks = dbh.getAllDecks();
+                if(allDecks == null)
+                    allDecks = new ArrayList<Deck>();
                 if(allDecks.size() < 9) {
-                    Deck d = new Deck(allDecks.size(), LogIn.PLAYER_USERNAME, newDeckName.getText().toString(), spinnerHero.getSelectedItem().toString(), 0, 0);
+                    Deck d = new Deck(allDecks.size()+1, LogIn.PLAYER_USERNAME, newDeckName.getText().toString(), spinnerHero.getSelectedItem().toString(), 0, 0);
+
                     dbh.makeNewDeck(d); // creating the deck in the local database
 
                     new CreateDeck(d).execute(new ApiConnector()); // creating the deck in the main database
@@ -92,7 +98,8 @@ public class DeckList extends Fragment {
                         main_deck_layout.removeAllViews();
                         for (int j = 0; j < allDecks.size(); j++) {
                             Button btnNew = new Button(v.getContext());
-                            btnNew.setText(allDecks.get(j).getHero() + "\n" + allDecks.get(j).getName());
+                            btnNew.setText(allDecks.get(j).getHero() + "\n" + allDecks.get(j).getName().replace('_',' '));
+                            btnNew.setOnClickListener(new DeckButtonListener());
                             main_deck_layout.addView(btnNew);
                         }
                 }
@@ -172,7 +179,7 @@ public class DeckList extends Fragment {
 
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
-            final DatabaseHandler dbh = DatabaseHandler.getInstance(parent.getActivity());
+            final DatabaseHandler dbh = DatabaseHandler.getInstance(parent.getActivity().getApplicationContext());
             JSONObject jo = null;
             try{
                 for(int i=0; i<jsonArray.length(); i++)
@@ -201,11 +208,7 @@ public class DeckList extends Fragment {
 
                     Button btnDeck = new Button(parent.getActivity());
                     btnDeck.setText(hero + "\n" + name);
-                    btnDeck.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                        }
-                    });
+                    btnDeck.setOnClickListener(new DeckButtonListener());
                     main_deck_layout.addView(btnDeck);
                 }
                 dbh.executeDeckBatch();
@@ -214,6 +217,28 @@ public class DeckList extends Fragment {
             {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private class DeckButtonListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
+            Button btn = (Button)v;
+            String deckName = (btn.getText().toString());
+
+            for(int c = 0; c<deckName.length(); c++){
+                if(deckName.charAt(c) == '\n') {
+                    deckName = deckName.substring(c + 1);
+                    break;
+                }
+            }
+            Intent inte = new Intent(getActivity(), DeckActivity.class);
+            Deck d = dbh.getDeck(deckName.replace(' ','_'));
+            Bundle b = new Bundle();
+            b.putInt("deck_id", d.getId());
+            inte.putExtras(b);
+            startActivity(inte);
         }
     }
 }

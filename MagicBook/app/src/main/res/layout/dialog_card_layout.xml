@@ -82,7 +82,40 @@
                     android:layout_height="wrap_content"
                     android:text="hp: 0" android:paddingRight="10dp"/>
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cardInDeckOptionsLayout"
+        android:weightSum="9"
+        android:gravity="center"
+        android:layout_gravity="center">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add"
+            android:id="@+id/btnAddCard"
+            android:layout_weight="2"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="x2"
+            android:id="@+id/checkBoxAdd2"
+            android:checked="false"
+            android:layout_weight="2"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="remove"
+            android:id="@+id/btnRemoveCard"
+            android:layout_weight="3"/>
+    </LinearLayout>
 
 </LinearLayout>

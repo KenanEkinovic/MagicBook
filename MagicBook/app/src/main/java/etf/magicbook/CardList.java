@@ -24,18 +24,24 @@ public class CardList extends Fragment {
 
     LinearLayout main_card_layout;
     EditText txtSearchCards;
+    boolean showDeckOptions;
 
+    Integer hero_id;
     private OnFragmentInteractionListener mListener;
 
-    public static CardList newInstance() {
-        CardList fragment = new CardList();
+    public static CardList newInstance(boolean showDeckOptions, Integer hero_id) {
+        CardList fragment = new CardList(showDeckOptions, hero_id);
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
+    public CardList(boolean showDeckOptions, Integer hero_id){
+        this.showDeckOptions = showDeckOptions;
+        this.hero_id = hero_id;
+    }
     public CardList() {
-        // Required empty public constructor
+        this.showDeckOptions = false;
     }
 
     @Override
@@ -62,7 +68,10 @@ public class CardList extends Fragment {
         DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
         dbh.deleteAllCards();
         main_card_layout = (LinearLayout) getActivity().findViewById(R.id.main_card_layout);
-        new GetCards(this).execute(new ApiConnector());
+        if(showDeckOptions)
+            new GetCards(this, hero_id).execute(new ApiConnector());
+        else
+            new GetCards(this, 0).execute(new ApiConnector());
 
         txtSearchCards = (EditText) getActivity().findViewById(R.id.txtSearchCards);
         txtSearchCards.addTextChangedListener(new TextWatcher() {
@@ -118,13 +127,17 @@ public class CardList extends Fragment {
 
     private class GetCards extends AsyncTask<ApiConnector,Long,JSONArray>{
         CardList parent;
-        GetCards(CardList l){
-            parent = l;
+        int hero_id;
+        GetCards(CardList l, int hero_id){
+            parent = l; this.hero_id = hero_id;
         }
 
         @Override
         protected JSONArray doInBackground(ApiConnector... params) {
-            return params[0].Cards(null);
+            if(hero_id == 0)
+                return params[0].Cards(null);
+            else
+                return params[0].Cards(hero_id);
         }
 
         @Override
@@ -169,8 +182,8 @@ public class CardList extends Fragment {
                             Button btn = (Button) v;
                             Card c = dbh.getCard(btn.getText().toString());
                             CardDialog cd = new CardDialog(c);
-                            //cd.setMyCard(c);
-                            //cd.setParameters(name,hero,rarity,type,subtype,cost,attack,hp,pictureURL);
+                            cd.setDeckLayoutOptions(showDeckOptions);
+                            //cd.setDeckLayoutOptions(true);
                             cd.show(getFragmentManager(), "CardDialog");
                         }
                     });

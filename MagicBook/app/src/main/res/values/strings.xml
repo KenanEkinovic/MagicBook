@@ -12,8 +12,10 @@
         <item>Paladin</item>
         <item>Shaman</item>
     </string-array>
+
     <string name="app_name">MagicBook</string>
     <string name="title_activity_main">MagicBook</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_deck">Deck Options</string>
 
 </resources>
