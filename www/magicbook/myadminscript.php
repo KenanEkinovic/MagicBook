@@ -10,9 +10,18 @@ mysqli_select_db($conn, "magicbookdb");
 
 $query = "";
 
-if(isset($_GET["login"]))
+if(isset($_GET["newDeck"]))
 {
-	$query = sprintf("SELECT count(username) as 'login' from player where username='%s' and password='%s';", $_GET['username'], $_GET['password']);
+	$query = sprintf("INSERT INTO deck VALUES(%d,'%s',%d,%d,0,0)", 
+		$_GET["id"], $_GET["name"], $_GET["hero"], $_GET["player_id"]);
+	if($conn->query($query) == TRUE)
+		echo '[{"newDeck":"1"}]';
+	else
+		echo '[{"newDeck":"0"}]';
+}
+else if(isset($_GET["login"]))
+{
+	$query = sprintf("SELECT id as 'login' from player where username='%s' and password='%s';", $_GET['username'], $_GET['password']);
 	$res1=mysqli_query($conn, $query);
 
 	while($row= mysqli_fetch_assoc($res1)){
@@ -66,6 +75,20 @@ else if(isset($_GET["version"]))
 
 	print(json_encode($output));
 }
+else if(isset($_GET["player_decks"]))
+{
+	$query = sprintf("SELECT deck.id, deck.name as 'Deck name', hero.name as 'Hero name', deck.number_of_wins, deck.number_of_losses 
+			from deck left join hero on deck.hero = hero.id left join player on player.id = 
+			deck.player where player.username ='%s'", $_GET['username']);
+	$res1=mysqli_query($conn, $query);
+
+	while($row= mysqli_fetch_assoc($res1)){
+		$output[]=$row;
+	}
+
+	print(json_encode($output));
+}
+
 
 mysqli_close($conn);
 
