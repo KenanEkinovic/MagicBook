@@ -22,16 +22,6 @@ import org.json.JSONObject;
  */
 public class CardList extends Fragment {
 
-    int id;
-    String name;
-    String hero;
-    String rarity;
-    String type;
-    String subtype;
-    String cost;
-    String attack;
-    String hp;
-    String pictureURL;
     LinearLayout main_card_layout;
     EditText txtSearchCards;
 
@@ -60,13 +50,12 @@ public class CardList extends Fragment {
         return inflater.inflate(R.layout.fragment_card_list, container, false);
     }
 
-    public void onButtonPressed(Uri uri) {
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
+        dbh.deleteAllCards();
         main_card_layout = (LinearLayout) getActivity().findViewById(R.id.main_card_layout);
         new GetCards(this).execute(new ApiConnector());
 
@@ -141,9 +130,9 @@ public class CardList extends Fragment {
                 for(int i=0; i<jsonArray.length(); i++)
                 {
                     jo = jsonArray.getJSONObject(i);
-                    id = Integer.valueOf(jo.getString("id"));
-                    name = jo.getString("name");
-                    hero = jo.getString("hero");
+                    int id = Integer.valueOf(jo.getString("id"));
+                    String name = jo.getString("name");
+                    String hero = jo.getString("hero");
                     switch (hero){
                         case "1":{hero = "Priest"; break;}
                         case "2":{hero = "Warrior"; break;}
@@ -156,13 +145,13 @@ public class CardList extends Fragment {
                         case "9":{hero = "Shaman"; break;}
                         default: hero = "null";
                     }
-                    rarity = jo.getString("rarity");
-                    type = jo.getString("type");
-                    subtype = jo.getString("subtype");
-                    cost = jo.getString("cost");
-                    attack = jo.getString("attack");
-                    hp = jo.getString("hp");
-                    pictureURL = jo.getString("picture");
+                    String rarity = jo.getString("rarity");
+                    String type = jo.getString("type");
+                    String subtype = jo.getString("subtype");
+                    String cost = jo.getString("cost");
+                    String attack = jo.getString("attack");
+                    String hp = jo.getString("hp");
+                    String pictureURL = jo.getString("picture");
                     Card c = new Card(id, name.replace(' ','_'), hero, type, subtype, rarity, cost, attack, hp, pictureURL);
                     dbh.createCard(c); //putting a card into batch
 

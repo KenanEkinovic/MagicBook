@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 28, 2014 at 08:39 PM
+-- Generation Time: Jan 02, 2015 at 01:05 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -640,11 +640,13 @@ CREATE TABLE IF NOT EXISTS `cardindeck` (
   `id` int(11) NOT NULL,
   `deck` int(11) DEFAULT NULL,
   `card` int(11) DEFAULT NULL,
+  `player` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `cardindeck_card_idx` (`card`),
   KEY `cardindeck_deck_idx` (`deck`),
-  KEY `id_2` (`id`)
+  KEY `id_2` (`id`),
+  KEY `player` (`player`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -686,6 +688,13 @@ CREATE TABLE IF NOT EXISTS `deck` (
   KEY `hero_idx` (`hero`),
   KEY `player_idx` (`player`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `deck`
+--
+
+INSERT INTO `deck` (`id`, `name`, `hero`, `player`, `number_of_wins`, `number_of_losses`) VALUES
+(1, 'Test deck 1', 2, 22, 4, 5);
 
 -- --------------------------------------------------------
 
@@ -735,7 +744,7 @@ CREATE TABLE IF NOT EXISTS `player` (
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `id_2` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=25 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
 
 --
 -- Dumping data for table `player`
@@ -789,6 +798,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Constraints for table `cardindeck`
 --
 ALTER TABLE `cardindeck`
+  ADD CONSTRAINT `cardindeck_ibfk_1` FOREIGN KEY (`player`) REFERENCES `player` (`id`),
   ADD CONSTRAINT `cardindeck_card` FOREIGN KEY (`card`) REFERENCES `card` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `cardindeck_deck` FOREIGN KEY (`deck`) REFERENCES `deck` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 

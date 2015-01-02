@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
+import javax.security.auth.login.LoginException;
+
 /**
  * Created by Kenan on 28.12.2014.
  */
@@ -23,6 +25,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "magicbookdb";
+    /*
     private static final String TABLE_CARDS = "card",
     KEY_ID = "id",
     KEY_NAME = "name",
@@ -33,7 +36,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     KEY_HP = "hp",
     KEY_COST = "cost",
     KEY_ATTACK = "attack",
-    KEY_PICTURE = "picture";
+    KEY_PICTURE = "picture";*/
 
     private DatabaseHandler(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -45,12 +48,99 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE card (id INTEGER PRIMARY KEY, name TEXT, " +
                 "hero INTEGER, type TEXT, subtype TEXT, rarity TEXT, " +
                 "cost INTEGER, attack INTEGER, hp INTEGER, picture TEXT)");
+        db.execSQL("CREATE TABLE deck (id INTEGER PRIMARY KEY AUTOINCREMENT, player TEXT, name TEXT, hero INTEGER," +
+                "number_of_wins INTEGER, number_of_losses INTEGER)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS card");
+        db.execSQL("DROP TABLE IF EXISTS deck");
         onCreate(db);
+    }
+
+    public void executeDeckBatch(){
+        SQLiteDatabase db = getWritableDatabase();
+        try{
+            db.beginTransaction();
+            for(int i=0; i<myDecks.size(); i++){
+                Deck d = myDecks.get(i);
+                ContentValues values = new ContentValues();
+                //values.put("id", d.getId());
+                values.put("player", d.getPlayer());
+                values.put("name", d.getName());
+                values.put("hero", d.getHero());
+                values.put("number_of_wins", d.getNumber_of_wins());
+                values.put("number_of_losses", d.getNumber_of_losses());
+                db.insert("deck", null, values);
+            }
+            db.setTransactionSuccessful();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        finally
+        {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    public Deck getDeck(int id){
+        SQLiteDatabase db = getReadableDatabase();
+        /*id,name,hero,  wins, losses*/
+        String[] what = new String[]{"id","player","name","hero","number_of_wins","number_of_losses"};
+        String[] where = new String[]{""+id, LogIn.PLAYER_USERNAME};
+        Cursor cursor = db.rawQuery("SELECT id, player, name, hero, number_of_wins, number_of_losses from deck where id=? and player=?", new String[]{""+id, LogIn.PLAYER_USERNAME});
+        //Cursor cursor = db.query("deck", what, "id=?", where, null, null, null, null);
+        if(cursor != null)
+            cursor.moveToFirst();
+        Deck d = null;
+        try {
+            d = new Deck(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), Integer.parseInt(cursor.getString(4)),
+                    Integer.parseInt(cursor.getString(5)));
+        }
+        catch(Exception e){
+            d = new Deck(1, LogIn.PLAYER_USERNAME,"","",0,0);
+        }
+        db.close();
+        return d;
+    }
+    public void deleteAllCards(){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM card");
+    }
+    public void deleteAllDecks(){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM deck");
+    }
+    public ArrayList<Deck> getAllDecks(){
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Deck> result = new ArrayList<Deck>();
+        Cursor cursor = db.rawQuery("Select id, player, name, hero, number_of_wins, number_of_losses  from deck where player='"+ LogIn.PLAYER_USERNAME + "'", new String[]{});
+        if(cursor.moveToFirst() == false)
+            return null;
+        do
+        {
+            result.add(new Deck(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), Integer.parseInt(cursor.getString(4)),
+                    Integer.parseInt(cursor.getString(5))));
+        }
+        while(cursor.moveToNext());
+        return result;
+    }
+
+    public void makeNewDeck(Deck d){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        //values.put("id", 1);
+        values.put("player", d.getPlayer());
+        values.put("name", d.getName());
+        values.put("hero", d.getHero());
+        values.put("number_of_wins", d.getNumber_of_wins());
+        values.put("number_of_losses", d.getNumber_of_losses());
+        db.insert("deck",null,values);
+        myDecks.add(d);
     }
 
     public void executeCardBatch(){
@@ -87,11 +177,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         {
             db.endTransaction();
             db.close();
-            myCards = new ArrayList<Card>();
         }
     }
+    private static ArrayList<Deck> myDecks = new ArrayList<Deck>();
+    public void createDeck(Deck d){
+        myDecks.add(d);
+    }
 
-    private ArrayList<Card> myCards = new ArrayList<Card>();
+    private static ArrayList<Card> myCards = new ArrayList<Card>();
     public void createCard(Card c){
         //SQLiteDatabase db = getWritableDatabase();
         myCards.add(c);

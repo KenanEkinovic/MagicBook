@@ -16,6 +16,11 @@ public class ApiConnector {
     static HttpEntity httpEntity = null;
     static JSONArray ja = null;
 
+    public JSONArray Decks(String username){
+        do_it("?player_decks&username="+username);
+        return ja;
+    }
+
     public JSONArray Cards(Integer hero){
         String extension = "";
         if(hero != null)

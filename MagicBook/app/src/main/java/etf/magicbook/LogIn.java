@@ -24,6 +24,8 @@ import org.w3c.dom.Text;
 public class LogIn extends ActionBarActivity {
     SQLiteDatabase db;
 
+    public static String PLAYER_USERNAME;
+
     private Button buttonLogin;
     private EditText txtUsername;
     private EditText txtPassword;
@@ -105,6 +107,8 @@ public class LogIn extends ActionBarActivity {
                 //closing the keyboard
                 InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                //storing player username
+                PLAYER_USERNAME = txtUsername.getText().toString();
             }
             else
             {
@@ -125,7 +129,10 @@ public class LogIn extends ActionBarActivity {
             String p = txtNewPassword.getText().toString();
             String e = txtNewEmail.getText().toString();
 
-            return params[0].Register(u,p,e);
+            if(txtNewUsername.getText().toString().isEmpty())
+                return null;
+            else
+                return params[0].Register(u,p,e);
         }
 
         @Override

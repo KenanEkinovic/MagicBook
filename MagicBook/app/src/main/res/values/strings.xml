@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="heroes_array">
+        <item>Priest</item>
+        <item>Warrior</item>
+        <item>Mage</item>
+        <item>Rogue</item>
+        <item>Druid</item>
+        <item>Warlock</item>
+        <item>Hunter</item>
+        <item>Paladin</item>
+        <item>Shaman</item>
+    </string-array>
     <string name="app_name">MagicBook</string>
     <string name="title_activity_main">MagicBook</string>
     <string name="action_settings">Settings</string>

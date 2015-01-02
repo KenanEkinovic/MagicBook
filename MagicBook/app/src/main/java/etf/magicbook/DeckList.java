@@ -2,16 +2,35 @@ package etf.magicbook;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by Kenan on 28.12.2014.
  */
 public class DeckList extends Fragment {
+
+    LinearLayout main_deck_layout;
+    Button btnNewDeck;
+    Spinner spinnerHero;
+    EditText newDeckName;
 
     private OnFragmentInteractionListener mListener;
 
@@ -36,7 +55,48 @@ public class DeckList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_deck_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_deck_list, container, false);
+
+        main_deck_layout = (LinearLayout) v.findViewById(R.id.main_deck_layout);
+        DatabaseHandler dbh = DatabaseHandler.getInstance(v.getContext());
+        dbh.deleteAllDecks();
+        ArrayList<Deck> allDecks = dbh.getAllDecks();
+        if(allDecks != null)
+            if(allDecks.size() != 0)
+                for(int j =0; j<allDecks.size(); j++) {
+                    Button btnNew = new Button(v.getContext());
+                    btnNew.setText(allDecks.get(j).getHero() + "\n" + allDecks.get(j).getName());
+                    main_deck_layout.addView(btnNew);
+                }
+        spinnerHero = (Spinner) v.findViewById(R.id.spinnerHero);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(),
+                R.array.heroes_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerHero.setAdapter(adapter);
+        newDeckName = (EditText) v.findViewById(R.id.txtNewDeckName);
+        btnNewDeck = (Button) v.findViewById(R.id.btnNewDeck);
+        btnNewDeck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(v.getContext(), newDeckName.getText().toString() + " " + spinnerHero.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+                DatabaseHandler dbh = DatabaseHandler.getInstance(v.getContext());
+                Deck d = new Deck(1, LogIn.PLAYER_USERNAME, newDeckName.getText().toString(), spinnerHero.getSelectedItem().toString(), 0,0);
+                dbh.makeNewDeck(d);
+
+                //refresh deck list
+                main_deck_layout.removeAllViews();
+                //ArrayList<Deck> allDecks = dbh.getAllDecks();
+                ArrayList<Deck> allDecks = dbh.getAllDecks();
+                for(int j =0; j<allDecks.size(); j++) {
+                    Button btnNew = new Button(v.getContext());
+                    btnNew.setText(allDecks.get(j).getHero() + "\n" + allDecks.get(j).getName());
+                    main_deck_layout.addView(btnNew);
+                }
+            }
+        });
+
+        new GetDecks(this).execute(new ApiConnector());
+        return v;
     }
 
     public void onButtonPressed(Uri uri) {
@@ -65,4 +125,62 @@ public class DeckList extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    private class GetDecks extends AsyncTask<ApiConnector, Long, JSONArray>{
+        DeckList parent;
+
+        GetDecks(DeckList l){
+            parent = l;
+        }
+
+        @Override
+        protected JSONArray doInBackground(ApiConnector... params) {
+            return params[0].Decks(LogIn.PLAYER_USERNAME);
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray) {
+            final DatabaseHandler dbh = DatabaseHandler.getInstance(parent.getActivity());
+            JSONObject jo = null;
+            try{
+                for(int i=0; i<jsonArray.length(); i++)
+                {
+                    jo = jsonArray.getJSONObject(i);
+                    int id = Integer.valueOf(jo.getString("id"));
+                    String name = jo.getString("Deck name");
+                    String hero = jo.getString("Hero name");
+                    switch (hero){
+                        case "1":{hero = "Priest"; break;}
+                        case "2":{hero = "Warrior"; break;}
+                        case "3":{hero = "Mage"; break;}
+                        case "4":{hero = "Rogue"; break;}
+                        case "5":{hero = "Druid"; break;}
+                        case "6":{hero = "Warlock"; break;}
+                        case "7":{hero = "Hunter"; break;}
+                        case "8":{hero = "Paladin"; break;}
+                        case "9":{hero = "Shaman"; break;}
+                        //default: hero = "null"; //deck must have a hero set
+                    }
+                    int number_of_wins = Integer.valueOf(jo.getString("number_of_wins"));
+                    int number_of_losses = Integer.valueOf(jo.getString("number_of_losses"));
+                    Deck d = new Deck(id, LogIn.PLAYER_USERNAME, name.replace(' ','_'), hero, number_of_wins, number_of_losses);
+                    dbh.createDeck(d); //putting a card into batch
+
+
+                    Button btnDeck = new Button(parent.getActivity());
+                    btnDeck.setText(hero + "\n" + name);
+                    btnDeck.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                        }
+                    });
+                    main_deck_layout.addView(btnDeck);
+                }
+                dbh.executeDeckBatch();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 }
