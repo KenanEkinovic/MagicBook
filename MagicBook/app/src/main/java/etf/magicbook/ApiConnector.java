@@ -8,20 +8,45 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.IOException;
 
 /**
  * Created by Kenan on 27.12.2014.
  */
 public class ApiConnector {
 
+    ApiConnector(){ ja = null;}
+
     static String url = "http://192.168.0.102/magicbook/myadminscript.php";
     static HttpEntity httpEntity = null;
-    static JSONArray ja = null;
-    ApiConnector(){}
+    JSONArray ja;
     public JSONArray getCardsInDeck(Deck d){
         //?cardsInDeck&player_id=22&deck_id=1
-        do_it("?cardsInDeck&player_id="+LogIn.PLAYER_ID+"&deck_id="+d.getId());
-        return ja;
+        //do_it("?cardsInDeck&player_id="+LogIn.PLAYER_ID+"&deck_id="+d.getId());
+        String response = null;
+        JSONArray result  = null;
+        try {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpGet httpGet = new HttpGet(url+"?cardsInDeck&player_id="+LogIn.PLAYER_ID+"&deck_id="+d.getId());
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+        httpEntity = httpResponse.getEntity();
+
+            response = EntityUtils.toString(httpEntity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //Log.e("Entity Response: ", response);
+
+        try {
+            result = new JSONArray(response);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
     public JSONArray deleteCardFromDeck(Card c, Deck d){
         String extension = "?deleteCardFromDeck&player_id="+LogIn.PLAYER_ID +"&deck_id="+d.getId()+"&card_id="+c.getId();

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -29,9 +31,10 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
-public class DeckActivity extends ActionBarActivity{
+public class DeckActivity extends ActionBarActivity {
     public static ArrayList<String> cards_in_deck = new ArrayList<String>();
     FrameLayout card_manager;
+    TextView txtDeckSize;
 
     Deck myDeck;
     public void onDialogClosed(int  card_id, boolean insert2, boolean delete){
@@ -128,8 +131,10 @@ public class DeckActivity extends ActionBarActivity{
             });
             myCardsLayout.addView(btnCard);
         }
-
+        txtDeckSize.setText(cards_in_deck.size()+"/30");
     }
+
+    GetCardsFromDeck task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,14 +143,18 @@ public class DeckActivity extends ActionBarActivity{
         card_manager = (FrameLayout) findViewById(R.id.cardManagerLayout);
         card_manager.setVisibility(View.GONE);
         myCardsLayout = (LinearLayout) findViewById(R.id.myCardsLayout);
+        txtDeckSize = (TextView) findViewById(R.id.txtDeckSize);
         Button btnManageCards = (Button) findViewById(R.id.btnManageCards);
         btnManageCards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Button me = (Button) v;
                 if(card_manager.getVisibility() == View.VISIBLE)
                     card_manager.setVisibility(View.GONE);
+
                 else if(card_manager.getVisibility() == View.GONE)
                     card_manager.setVisibility(View.VISIBLE);
+
             }
         });
 
@@ -156,8 +165,8 @@ public class DeckActivity extends ActionBarActivity{
 
         setTitle( "Deck menu : " + myDeck.getName());
 
-        GetCardsFromDeck a = new GetCardsFromDeck(this, myDeck);
-        a.execute(new ApiConnector());
+        task = new GetCardsFromDeck(this, myDeck);
+        task.execute(new ApiConnector());
 
         Integer hero_id = null;
         String hero_name = myDeck.getHero();
@@ -218,7 +227,14 @@ public class DeckActivity extends ActionBarActivity{
             return params[0].deleteCardFromDeck(c,d);
         }
     }
-    private class GetCardsFromDeck extends AsyncTask<ApiConnector, Long, ArrayList<String>>{
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        task.cancel(true);
+    }
+
+    private class GetCardsFromDeck extends AsyncTask<ApiConnector, Long, JSONArray>{
 
         Deck d;
         DeckActivity parent;
@@ -227,8 +243,9 @@ public class DeckActivity extends ActionBarActivity{
             this.parent = l;
         }
         @Override
-        protected ArrayList<String> doInBackground(ApiConnector... params) {
-            ArrayList<String> result = new ArrayList<String>();
+        protected JSONArray doInBackground(ApiConnector... params) {
+            return params[0].getCardsInDeck(d);
+            /*ArrayList<String> result = new ArrayList<String>();
             JSONArray jsonArray = params[0].getCardsInDeck(d);
             final DatabaseHandler dbh = DatabaseHandler.getInstance(getApplicationContext());
             JSONObject jo = null;
@@ -256,12 +273,42 @@ public class DeckActivity extends ActionBarActivity{
             }catch(Exception e){
                 e.printStackTrace();
             }
-            return result;
+            return result;*/
         }
 
         @Override
-        protected void onPostExecute(ArrayList<String> res) {
-            cards_in_deck = res;
+        protected void onPostExecute(JSONArray jsonArray) {
+            ArrayList<String> result = new ArrayList<String>();
+            final DatabaseHandler dbh = DatabaseHandler.getInstance(getApplicationContext());
+            JSONObject jo = null;
+            try{
+                for(int i=0; i<jsonArray.length(); i++) {
+                    jo = jsonArray.getJSONObject(i);
+                    int card_id = jo.getInt("card");
+                    String card_name = jo.getString("name");
+                    result.add(card_name);
+                    Button b = new Button(parent.getApplicationContext());
+                    b.setText(card_name);
+                    b.setTextColor(Color.BLACK);
+                    myCardsLayout.addView(b);
+                    b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Button btn = (Button) v;
+                            Card c = dbh.getCard(btn.getText().toString());
+                            CardDialog cd = new CardDialog(c);
+                            cd.setDeckLayoutOptions(true);
+                            cd.show(getSupportFragmentManager(), "CardDialog");
+                        }
+                    });
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            cards_in_deck = result;
+            txtDeckSize.setText(cards_in_deck.size()+"/30");
+            Toast.makeText(getApplicationContext(), cards_in_deck.size() + " cards found for this deck", Toast.LENGTH_SHORT).show();
             //refreshCardListView();
         }
     }

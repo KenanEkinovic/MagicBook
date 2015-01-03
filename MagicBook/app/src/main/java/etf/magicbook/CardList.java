@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -55,24 +56,29 @@ public class CardList extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_card_list, container, false);
 
-        DatabaseHandler dbh = DatabaseHandler.getInstance(v.getContext());
-        dbh.deleteAllCards();
+        //DatabaseHandler dbh = DatabaseHandler.getInstance(v.getContext());
+        //dbh.deleteAllCards();
 
         return v;
     }
-
+    GetCards task;
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
-        dbh.deleteAllCards();
+        //DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
+        //dbh.deleteAllCards();
         main_card_layout = (LinearLayout) getActivity().findViewById(R.id.main_card_layout);
-        if(showDeckOptions)
-            new GetCards(this, hero_id).execute(new ApiConnector());
-        else
-            new GetCards(this, 0).execute(new ApiConnector());
-
+        if(showDeckOptions) {
+            task = new GetCards(this,hero_id);
+            task.execute(new ApiConnector());
+            //new GetCards(this, hero_id).execute(new ApiConnector());
+        }
+        else {
+            task = new GetCards(this,0);
+            task.execute(new ApiConnector());
+            //new GetCards(this, 0).execute(new ApiConnector());
+        }
         txtSearchCards = (EditText) getActivity().findViewById(R.id.txtSearchCards);
         txtSearchCards.addTextChangedListener(new TextWatcher() {
             @Override
@@ -143,6 +149,7 @@ public class CardList extends Fragment {
         @Override
         protected void onPostExecute(JSONArray jsonArray){
             final DatabaseHandler dbh = DatabaseHandler.getInstance(parent.getActivity());
+            dbh.deleteAllCards();
             JSONObject jo = null;
             try{
                 for(int i=0; i<jsonArray.length(); i++)

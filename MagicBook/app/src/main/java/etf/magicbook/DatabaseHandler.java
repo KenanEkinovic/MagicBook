@@ -172,7 +172,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 values.put("picture", c.getPictureURL());
                 //System.out.println("Slika: "+ c.getPictureURL());
                 //values.put("picture", "nista");
-                db.insert("card",null,values);
+                try {
+                    //db.insert("card", null, values);
+                    db.insertOrThrow("card",null,values);
+                }catch(Exception e){}
             }
             db.setTransactionSuccessful();
         }
