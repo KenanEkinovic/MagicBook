@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import java.sql.SQLData;
 import java.util.ArrayList;
 
 import javax.security.auth.login.LoginException;
@@ -17,6 +18,7 @@ import javax.security.auth.login.LoginException;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static DatabaseHandler instance;
+
     public static DatabaseHandler getInstance(Context context){
         if(instance == null){
             instance = new DatabaseHandler(context);
@@ -26,25 +28,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "magicbookdb";
-    /*
-    private static final String TABLE_CARDS = "card",
-    KEY_ID = "id",
-    KEY_NAME = "name",
-    KEY_HERO = "hero",
-    KEY_RARITY = "rarity",
-    KEY_SUBTYPE = "subtype",
-    KEY_TYPE = "type",
-    KEY_HP = "hp",
-    KEY_COST = "cost",
-    KEY_ATTACK = "attack",
-    KEY_PICTURE = "picture";*/
 
     private DatabaseHandler(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //db.execSQL("DROP TABLE IF EXISTS card");
         /*id,name,hero,  type,subtype,rarity,  cost,attack,hp, pictureURL*/
         db.execSQL("CREATE TABLE card (id INTEGER PRIMARY KEY, name TEXT, " +
                 "hero INTEGER, type TEXT, subtype TEXT, rarity TEXT, " +
@@ -204,36 +193,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static ArrayList<Card> myCards = new ArrayList<Card>();
     public void createCard(Card c){
-        //SQLiteDatabase db = getWritableDatabase();
         myCards.add(c);
-/*
-        ContentValues values = new ContentValues();
-        values.put("id", c.getId());
-        values.put("name", c.getName());
-        values.put("hero", c.getHero());
-        values.put("type", c.getType());
-        values.put("subtype", c.getSubtype());
-        values.put("rarity", c.getRarity());
-        values.put("cost", c.getCost());
-        values.put("attack", c.getAttack());
-        values.put("hp", c.getHp());
-        //values.put("picture", c.getPictureURL());
-        //System.out.println("Slika: "+ c.getPictureURL());
-        values.put("picture", "nista");
-        db.insert("card",null,values);*/
     }
 
     public Card getCard(int id){
         SQLiteDatabase db = getReadableDatabase();
-        String[] what = new String[]{"id","name","hero","type","subtype","rarity","cost","attack","hp","picture"};
-        String[] where = new String[]{""+id};
-        Cursor cursor = db.query("card", what, "id=?", where, null, null, null, null);
+        Cursor cursor = db.rawQuery("SELECT id,name,hero,type,subtype,rarity,cost,attack,hp,picture FROM card WHERE id=?", new String[]{String.valueOf(id)});
         if(cursor != null)
             cursor.moveToFirst();
         Card c = null;
         try {
-            c = new Card(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3),
-                    cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8), cursor.getString(9));
+            int b = cursor.getInt(0);
+            String a = cursor.getString(0);
+            String a1 = cursor.getString(1);
+            String a2 = cursor.getString(2);
+            String a3 = cursor.getString(3);
+            String a4 = cursor.getString(4);
+            String a5 = cursor.getString(5);
+            String a6 = cursor.getString(6);
+            String a7 = cursor.getString(7);
+            String a8 = cursor.getString(8);
+            String a9 = cursor.getString(9);
+            c = new Card(Integer.valueOf(a),a1,a2,a3,a4,a5,a6,a7,a8,a9);
         }
         catch(Exception e){
             c = new Card(1,"","","","","","","","","");

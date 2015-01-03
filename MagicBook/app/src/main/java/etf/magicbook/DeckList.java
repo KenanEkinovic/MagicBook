@@ -237,6 +237,7 @@ public class DeckList extends Fragment {
             Deck d = dbh.getDeck(deckName.replace(' ','_'));
             Bundle b = new Bundle();
             b.putInt("deck_id", d.getId());
+
             inte.putExtras(b);
             startActivity(inte);
         }

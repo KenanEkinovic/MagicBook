@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 03, 2015 at 12:06 AM
+-- Generation Time: Jan 03, 2015 at 06:57 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -641,6 +641,16 @@ CREATE TABLE IF NOT EXISTS `cardindeck` (
   `deck` int(11) DEFAULT NULL,
   `card` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `cardindeck`
+--
+
+INSERT INTO `cardindeck` (`player`, `deck`, `card`) VALUES
+(22, 2, 256),
+(22, 2, 256),
+(22, 1, 285),
+(22, 1, 138);
 
 -- --------------------------------------------------------
 

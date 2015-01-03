@@ -1,5 +1,7 @@
 package etf.magicbook;
 
+import android.os.StrictMode;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -15,7 +17,12 @@ public class ApiConnector {
     static String url = "http://192.168.0.102/magicbook/myadminscript.php";
     static HttpEntity httpEntity = null;
     static JSONArray ja = null;
-
+    ApiConnector(){}
+    public JSONArray getCardsInDeck(Deck d){
+        //?cardsInDeck&player_id=22&deck_id=1
+        do_it("?cardsInDeck&player_id="+LogIn.PLAYER_ID+"&deck_id="+d.getId());
+        return ja;
+    }
     public JSONArray deleteCardFromDeck(Card c, Deck d){
         String extension = "?deleteCardFromDeck&player_id="+LogIn.PLAYER_ID +"&deck_id="+d.getId()+"&card_id="+c.getId();
         do_it(extension);
@@ -75,6 +82,8 @@ public class ApiConnector {
 
     private void do_it(String extension){
         try{
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(url+extension);
             HttpResponse httpResponse = httpClient.execute(httpGet);

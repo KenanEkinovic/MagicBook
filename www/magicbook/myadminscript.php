@@ -39,6 +39,15 @@ else if(isset($_GET["deleteCardFromDeck"]))
 }
 else if(isset($_GET["cardsInDeck"]))
 {
+	$query = sprintf("SELECT card, name FROM cardindeck LEFT JOIN card ON cardindeck.card = card.id
+			 WHERE player=%d AND deck=%d", $_GET["player_id"], $_GET["deck_id"]);	
+	$res1=mysqli_query($conn, $query);
+
+	while($row= mysqli_fetch_assoc($res1)){
+		$output[]=$row;
+	}
+
+	print(json_encode($output));
 }
 else if(isset($_GET["newDeck"]))
 {
@@ -51,14 +60,19 @@ else if(isset($_GET["newDeck"]))
 }
 else if(isset($_GET["login"]))
 {
-	$query = sprintf("SELECT id as 'login' from player where username='%s' and password='%s';", $_GET['username'], $_GET['password']);
+	$query = sprintf("SELECT id as 'login' from player where username='%s' and password='%s'", $_GET['username'], $_GET['password']);
+
+	
 	$res1=mysqli_query($conn, $query);
+	$row= mysqli_fetch_assoc($res1);
 
-	while($row= mysqli_fetch_assoc($res1)){
+	if(!empty($row))
+	{
 		$output[]=$row;
+		print(json_encode($output));
 	}
-
-	print(json_encode($output));
+	else
+		echo '[{"login":"0"}]';
 }
 else if(isset($_GET["register"]))
 {
