@@ -1,10 +1,8 @@
 package etf.magicbook;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,9 +15,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -93,14 +88,9 @@ public class CardDialog extends DialogFragment {
         else
             t.setText("Subtype: " + myCard.getSubtype());
         t = (TextView) view.findViewById(R.id.card_type);
-        t.setText("Type: "+myCard.getType());/*
-        ImageView iv = (ImageView) view.findViewById(R.id.card_picture);
-        Uri u = Uri.parse(pictureURL);
-        iv.setImageURI(u);*/
+        t.setText("Type: "+myCard.getType());
         ImageView iv = (ImageView) view.findViewById(R.id.card_picture);
         new ImageLoadTask(myCard.getPictureURL(), iv).execute();
-        //System.out.println(myCard.getPictureURL());
-        //iv.setImageURI(Uri.parse(myCard.getPictureURL()));
         return view;
     }
 

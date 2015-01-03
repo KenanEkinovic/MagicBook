@@ -1,17 +1,14 @@
 package etf.magicbook;
 
 import android.app.Activity;
-import android.view.View.OnClickListener;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -94,14 +91,15 @@ public class DeckList extends Fragment {
                 }
                 final DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
                 ArrayList<Deck> allDecks = dbh.getAllDecks();
+
+                if(allDecks == null)
+                    allDecks = new ArrayList<Deck>();
                 for(int i=0; i<allDecks.size(); i++){
                     if(deck_name.equals(allDecks.get(i).getName().toString())){
                         Toast.makeText(getActivity(), "Deck with that name already exists", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
-                if(allDecks == null)
-                    allDecks = new ArrayList<Deck>();
                 if(allDecks.size() < 9) {
                     Deck d = new Deck(allDecks.size()+1, LogIn.PLAYER_USERNAME, newDeckName.getText().toString(), spinnerHero.getSelectedItem().toString(), 0, 0);
 

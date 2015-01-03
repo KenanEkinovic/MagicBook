@@ -23,6 +23,11 @@ public class ApiConnector {
     static HttpEntity httpEntity = null;
     JSONArray ja;
 
+    public JSONArray getLevel(){
+        do_it("?level&player_id="+LogIn.PLAYER_ID);
+        return ja;
+    }
+
     public JSONArray incrementWinOrLoss(Deck d, boolean win){
         String extension = "";
         if(win)

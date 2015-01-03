@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 03, 2015 at 07:38 PM
+-- Generation Time: Jan 04, 2015 at 12:23 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -647,36 +647,39 @@ CREATE TABLE IF NOT EXISTS `cardindeck` (
 --
 
 INSERT INTO `cardindeck` (`player`, `deck`, `card`) VALUES
-(22, 1, 500),
-(22, 1, 176),
-(22, 1, 176),
-(22, 1, 269),
-(22, 1, 269),
-(22, 1, 295),
-(22, 1, 64),
-(22, 1, 64),
-(22, 1, 295),
-(22, 1, 513),
-(22, 1, 513),
-(22, 1, 411),
-(22, 1, 411),
+(25, 1, 10),
+(25, 1, 7),
+(25, 1, 7),
+(22, 1, 11),
+(22, 1, 11),
+(22, 1, 10),
+(22, 1, 88),
+(22, 1, 88),
+(22, 1, 102),
+(22, 1, 102),
+(22, 1, 108),
+(22, 1, 111),
+(22, 1, 112),
+(22, 1, 132),
+(22, 1, 132),
+(22, 1, 137),
+(22, 1, 137),
+(22, 1, 149),
+(22, 1, 157),
+(22, 1, 157),
+(22, 1, 164),
+(22, 1, 164),
+(22, 1, 168),
+(22, 1, 168),
 (22, 1, 177),
-(22, 1, 235),
-(22, 1, 34),
-(22, 1, 34),
-(22, 1, 295),
-(22, 1, 295),
-(22, 1, 64),
-(22, 1, 285),
-(22, 1, 495),
-(22, 1, 495),
-(22, 1, 173),
-(22, 1, 173),
-(22, 1, 133),
-(22, 1, 7),
-(22, 1, 7),
-(22, 1, 430),
-(22, 1, 430);
+(22, 1, 184),
+(22, 1, 184),
+(22, 1, 186),
+(22, 1, 209),
+(22, 1, 387),
+(22, 1, 387),
+(22, 1, 138),
+(22, 1, 205);
 
 -- --------------------------------------------------------
 
@@ -721,7 +724,9 @@ CREATE TABLE IF NOT EXISTS `deck` (
 --
 
 INSERT INTO `deck` (`id`, `name`, `hero`, `player`, `number_of_wins`, `number_of_losses`) VALUES
-(1, 'ttt', 1, 22, 4, 0);
+(1, 'ttt', 1, 22, 76, 33),
+(1, 'test 1', 7, 25, 6, 2),
+(2, 'yy', 1, 25, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -771,16 +776,17 @@ CREATE TABLE IF NOT EXISTS `player` (
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `id_2` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=25 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
 
 --
 -- Dumping data for table `player`
 --
 
 INSERT INTO `player` (`id`, `username`, `email`, `level`, `password`, `number_of_wins`, `number_of_losses`) VALUES
-(22, 'Kenan', 'nanekinovic@gmail.com', 4, 'kenan', 153, 104),
+(22, 'Kenan', 'nanekinovic@gmail.com', 5, 'kenan', 211, 134),
 (23, 'Berina', 'bmuratovic1@gmail.com', 2, 'berina', 72, 43),
-(24, 'Lejla', 'lejlaa.fazlagic@gmail.com', 1, 'lejla', 23, 86);
+(24, 'Lejla', 'lejlaa.fazlagic@gmail.com', 1, 'lejla', 0, 0),
+(25, 'test', 'testmail', 2, 'test', 80, 18);
 
 --
 -- Triggers `player`

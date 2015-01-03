@@ -4,21 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 
 public class LogIn extends ActionBarActivity {
@@ -113,7 +108,15 @@ public class LogIn extends ActionBarActivity {
                 im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 //storing player username
                 PLAYER_USERNAME = txtUsername.getText().toString();
-                PLAYER_ID = Integer.parseInt(s);
+                try{
+                    PLAYER_ID = Integer.parseInt(s);
+                }
+                catch (Exception e){
+                    Toast.makeText(getApplicationContext(), "Cannot connect to the service", Toast.LENGTH_SHORT).show();
+                    System.exit(0);
+                    return;
+                }
+
             }
             else
             {
@@ -182,6 +185,7 @@ public class LogIn extends ActionBarActivity {
         protected void onPostExecute(JSONArray jsonArray){
             final DatabaseHandler dbh = DatabaseHandler.getInstance(parent);
             dbh.deleteAllCards();
+            dbh.deleteAllDecks();
             JSONObject jo = null;
             try{
                 for(int i=0; i<jsonArray.length(); i++)
@@ -218,8 +222,6 @@ public class LogIn extends ActionBarActivity {
             {
                 e.printStackTrace();
             }
-
-
         }
     }
 }

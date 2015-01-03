@@ -1,16 +1,10 @@
 package etf.magicbook;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
-import android.os.StrictMode;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -19,16 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -38,6 +26,7 @@ public class DeckActivity extends ActionBarActivity {
     TextView txtDeckSize;
     Button btnLoss;
     Button btnWin;
+    Button btnStats;
     Deck myDeck;
     TextView txtWins;
     TextView txtLosses;
@@ -58,9 +47,13 @@ public class DeckActivity extends ActionBarActivity {
             return;
         }
         //does card exist in deck?
+        if(cards_in_deck.size() == 30){
+            Toast.makeText(getApplicationContext(), "The deck is full", Toast.LENGTH_SHORT).show();
+            return;
+        }
         int number_of_occurances = 0;
         for(int i=0; i<cards_in_deck.size(); i++){
-            if(cards_in_deck.get(i).equals(card.getName()))
+            if(cards_in_deck.get(i).replace('_',' ').equals(card.getName().replace('_',' ')))
             {
                 number_of_occurances++;
                 if((number_of_occurances == 1 && card.getRarity().equals("Legendary") ) || number_of_occurances == 2)
@@ -70,7 +63,7 @@ public class DeckActivity extends ActionBarActivity {
                 }
             }
         }
-        if(number_of_occurances == 2 && delete == false){
+        if(number_of_occurances >= 2 && delete == false){
             Toast.makeText(getApplicationContext(), "Card is already in the deck", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -140,7 +133,7 @@ public class DeckActivity extends ActionBarActivity {
         setContentView(R.layout.activity_deck);
         card_manager = (FrameLayout) findViewById(R.id.cardManagerLayout);
         card_manager.setVisibility(View.GONE);
-
+        btnStats = (Button) findViewById(R.id.btnStats);
         myCardsLayout = (LinearLayout) findViewById(R.id.myCardsLayout);
         txtDeckSize = (TextView) findViewById(R.id.txtDeckSize);
         txtWins = (TextView) findViewById(R.id.txtWins);
@@ -169,12 +162,14 @@ public class DeckActivity extends ActionBarActivity {
                     me.setText("Add Cards");
                     btnWin.setVisibility(View.VISIBLE);
                     btnLoss.setVisibility(View.VISIBLE);
+                    btnStats.setVisibility(View.VISIBLE);
                 }
                 else if(card_manager.getVisibility() == View.GONE) {
                     card_manager.setVisibility(View.VISIBLE);
                     me.setText("Return to deck");
                     btnWin.setVisibility(View.GONE);
                     btnLoss.setVisibility(View.GONE);
+                    btnStats.setVisibility(View.GONE);
                 }
             }
         });
@@ -183,13 +178,30 @@ public class DeckActivity extends ActionBarActivity {
         //int deck_id = b.getInt("deck_id");
         String deck_name = b.getString("deck_name");
         final DatabaseHandler dbh = DatabaseHandler.getInstance(getApplicationContext());
-        myDeck = dbh.getDeck(deck_name);
+        myDeck = dbh.getDeck(deck_name.replace(' ','_'));
 
         setTitle("Deck menu : " + myDeck.getName());
 
         task = new GetCardsFromDeck(this, myDeck);
         task.execute(new ApiConnector());
 
+
+
+        btnStats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<Card> argument = new ArrayList<Card>();
+                for(int i=0; i<cards_in_deck.size();i++) {
+                    Card c = dbh.getCard(cards_in_deck.get(i));
+                    argument.add(c);
+                }
+                if(argument!= null)
+                    if(argument.size() != 0) {
+                        DeckStatistic ds = new DeckStatistic(argument, myDeck);
+                        ds.show(getSupportFragmentManager(), "DeckStatistic");
+                    }
+            }
+        });
         Integer hero_id = null;
         String hero_name = myDeck.getHero();
         switch (hero_name){
@@ -343,6 +355,9 @@ public class DeckActivity extends ActionBarActivity {
                         myDeck.loose();
                         txtLosses.setText("Losses: " + myDeck.getNumber_of_losses());
                     }
+
+                    DatabaseHandler dbh = DatabaseHandler.getInstance(getApplicationContext());
+                    dbh.updateDeck(deck);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

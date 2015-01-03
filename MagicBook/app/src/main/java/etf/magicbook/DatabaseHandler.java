@@ -5,13 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
-
-import java.lang.reflect.Array;
-import java.sql.SQLData;
 import java.util.ArrayList;
-
-import javax.security.auth.login.LoginException;
 
 /**
  * Created by Kenan on 28.12.2014.
@@ -39,7 +33,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE card (id INTEGER PRIMARY KEY, name TEXT, " +
                 "hero INTEGER, type TEXT, subtype TEXT, rarity TEXT, " +
                 "cost INTEGER, attack INTEGER, hp INTEGER, picture TEXT)");
-        db.execSQL("CREATE TABLE deck (id INTEGER PRIMARY KEY AUTOINCREMENT, player TEXT, name TEXT, hero INTEGER," +
+        db.execSQL("CREATE TABLE deck (id INTEGER, player TEXT, name TEXT, hero INTEGER," +
                 "number_of_wins INTEGER, number_of_losses INTEGER)");
     }
 
@@ -59,7 +53,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ContentValues values = new ContentValues();
                 values.put("id", d.getId());
                 values.put("player", d.getPlayer());
-                values.put("name", d.getName());
+                values.put("name", d.getName().replace(' ', '_'));
                 values.put("hero", d.getHero());
                 values.put("number_of_wins", d.getNumber_of_wins());
                 values.put("number_of_losses", d.getNumber_of_losses());
@@ -80,7 +74,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Deck getDeck(String name)
     {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT id, player, name, hero, number_of_wins, number_of_losses from deck where name=?", new String[]{name});
+        Cursor cursor = db.rawQuery("SELECT id, player, name, hero, number_of_wins, number_of_losses from deck where name=?", new String[]{name.replace(' ','_')});
         if(cursor != null)
             cursor.moveToFirst();
         Deck d = null;
@@ -116,13 +110,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM deck WHERE id=" + d.getId());
     }
-    public void deleteAllCards(){
+    public boolean deleteAllCards(){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM card");
+        return true;
     }
-    public void deleteAllDecks(){
+    public boolean deleteAllDecks(){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM deck");
+        return true;
     }
     public ArrayList<Deck> getAllDecks(){
         SQLiteDatabase db = getReadableDatabase();
@@ -150,7 +146,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ContentValues values = new ContentValues();
                 values.put("id", d.getId());
                 values.put("player", d.getPlayer());
-                values.put("name", d.getName());
+                values.put("name", d.getName().replace(' ','_'));
                 values.put("hero", d.getHero());
                 values.put("number_of_wins", d.getNumber_of_wins());
                 values.put("number_of_losses", d.getNumber_of_losses());
@@ -229,7 +225,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 //values.put("picture", "nista");
                 try {
                     //db.insert("card", null, values);
-                    db.insertOrThrow("card",null,values);
+                    db.insertOrThrow("card", null, values);
                 }catch(Exception e){}
             }
             db.setTransactionSuccessful();
@@ -300,5 +296,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         db.close();
         return c;
+    }
+
+    public void updateDeck(Deck deck) {
+        String name = deck.getName().replace(' ','_');
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("UPDATE deck SET number_of_wins="+deck.getNumber_of_wins()+", number_of_losses="+deck.getNumber_of_losses()+" where name='"+name+"'");
     }
 }

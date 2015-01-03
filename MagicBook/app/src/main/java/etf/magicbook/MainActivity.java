@@ -1,26 +1,22 @@
 package etf.magicbook;
 
-import java.util.Locale;
-
-import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -50,6 +46,14 @@ public class MainActivity extends ActionBarActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        new GetLevel().execute(new ApiConnector());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new GetLevel().execute(new ApiConnector());
     }
 
     @Override
@@ -60,12 +64,8 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -102,6 +102,29 @@ public class MainActivity extends ActionBarActivity {
                     return "Decks";
             }
             return null;
+        }
+    }
+
+    private class GetLevel extends AsyncTask<ApiConnector,Long,JSONArray>{
+
+        @Override
+        protected JSONArray doInBackground(ApiConnector... params) {
+            return params[0].getLevel();
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray) {
+            try {
+                JSONObject jo = jsonArray.getJSONObject(0);
+                int level = jo.getInt("level");
+
+                if(level != 0)
+                {
+                    setTitle(LogIn.PLAYER_USERNAME + " : level " + level);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

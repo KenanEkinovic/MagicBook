@@ -12,10 +12,20 @@ $query = "";
 
 if(isset($_GET["win"]))
 {
+	$update1 = FALSE;
+	$update2 = FALSE;
 	$query = sprintf("UPDATE deck SET number_of_wins=number_of_wins+1 where player=%d and id=%d", $_GET["player_id"], $_GET["deck_id"]);
 
 	if($conn->query($query) == TRUE)
-	echo '[{"updateOK":"1"}]';
+		$update1 = TRUE;
+	
+	$query = sprintf("UPDATE player set number_of_wins = number_of_wins+1 where id=%u", $_GET["player_id"]);
+
+	if($conn->query($query) == TRUE)
+		$update2 = TRUE;
+
+	if($update1 && $update2)
+		echo '[{"updateOK":"1"}]';	
 	else
 		echo '[{"updateOK":"0"}]';
 
@@ -23,12 +33,23 @@ if(isset($_GET["win"]))
 }
 else if(isset($_GET["loss"]))
 {
+	$update1 = FALSE;
+	$update2 = FALSE;
 	$query = sprintf("UPDATE deck SET number_of_losses=number_of_losses+1 where player=%d and id=%d", $_GET["player_id"], $_GET["deck_id"]);
 
 	if($conn->query($query) == TRUE)
-	echo '[{"updateOK":"1"}]';
+		$update1 = TRUE;
+	
+	$query = sprintf("UPDATE player SET number_of_losses=number_of_losses+1 WHERE id=%u", $_GET["player_id"]);
+
+	if($conn->query($query) == TRUE)
+		$update2 = TRUE;
+
+	if($update1 && $update2)
+		echo '[{"updateOK":"1"}]';	
 	else
 		echo '[{"updateOK":"0"}]';
+
 }
 else if(isset($_GET["insertCardInDeck"]))
 {
@@ -68,6 +89,22 @@ else if(isset($_GET["cardsInDeck"]))
 	}
 
 	print(json_encode($output));
+}
+else if(isset($_GET["level"]))
+{
+	$query = sprintf("SELECT level FROM player WHERE id=%u", $_GET["player_id"]);
+	
+	$res1=mysqli_query($conn, $query);
+		$row= mysqli_fetch_assoc($res1);
+
+		if(!empty($row))
+		{
+			$output[]=$row;
+			print(json_encode($output));
+		}
+		else
+			echo '[{"level":"0"}]';
+
 }
 else if(isset($_GET["newDeck"]))
 {
