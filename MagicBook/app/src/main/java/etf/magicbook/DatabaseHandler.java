@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.sql.SQLData;
 import java.util.ArrayList;
 
@@ -38,7 +39,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE card (id INTEGER PRIMARY KEY, name TEXT, " +
                 "hero INTEGER, type TEXT, subtype TEXT, rarity TEXT, " +
                 "cost INTEGER, attack INTEGER, hp INTEGER, picture TEXT)");
-        db.execSQL("CREATE TABLE deck (id INTEGER, player TEXT, name TEXT, hero INTEGER," +
+        db.execSQL("CREATE TABLE deck (id INTEGER PRIMARY KEY AUTOINCREMENT, player TEXT, name TEXT, hero INTEGER," +
                 "number_of_wins INTEGER, number_of_losses INTEGER)");
     }
 
@@ -96,8 +97,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Deck getDeck(int id){
         SQLiteDatabase db = getReadableDatabase();
         /*id,name,hero,  wins, losses*/
-        String[] what = new String[]{"id","player","name","hero","number_of_wins","number_of_losses"};
-        String[] where = new String[]{""+id, LogIn.PLAYER_USERNAME};
         Cursor cursor = db.rawQuery("SELECT id, player, name, hero, number_of_wins, number_of_losses from deck where id=? and player=?", new String[]{""+id, LogIn.PLAYER_USERNAME});
         //Cursor cursor = db.query("deck", what, "id=?", where, null, null, null, null);
         if(cursor != null)
@@ -112,6 +111,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         db.close();
         return d;
+    }
+    public void deleteDeck(Deck d){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM deck WHERE id=" + d.getId());
     }
     public void deleteAllCards(){
         SQLiteDatabase db = getWritableDatabase();
@@ -138,18 +141,70 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void makeNewDeck(Deck d){
         SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put("id", d.getId());
-        values.put("player", d.getPlayer());
-        values.put("name", d.getName());
-        values.put("hero", d.getHero());
-        values.put("number_of_wins", d.getNumber_of_wins());
-        values.put("number_of_losses", d.getNumber_of_losses());
-        db.insert("deck",null,values);
-        myDecks.add(d);
+        boolean id_taken = false;
+        do {
+            Cursor c = db.rawQuery("SELECT * FROM deck WHERE id=" + d.getId(), null);
+            id_taken = true;
+            if (!c.moveToFirst()) {
+                id_taken = false;
+                ContentValues values = new ContentValues();
+                values.put("id", d.getId());
+                values.put("player", d.getPlayer());
+                values.put("name", d.getName());
+                values.put("hero", d.getHero());
+                values.put("number_of_wins", d.getNumber_of_wins());
+                values.put("number_of_losses", d.getNumber_of_losses());
+                db.insert("deck", null, values);
+                myDecks.add(d);
+                break;
+            }
+            d.setId(d.getId()+1);
+        }while(id_taken);
     }
 
+    public ArrayList<Card> getCards(Integer hero){
+        ArrayList<Card> result = new ArrayList<Card>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        String[] what = new String[]{"id","name","hero","type","subtype","rarity","cost","attack","hp","picture"};
+        String[] where = new String[]{};
+        cursor = db.query("card", what, "", where, null, null, null, null);
+
+        if(cursor != null)
+            cursor.moveToFirst();
+        do{
+            String a = cursor.getString(0);
+            String a1 = cursor.getString(1).replace('_',' ');
+            String a2 = cursor.getString(2);
+            String a3 = cursor.getString(3);
+            String a4 = cursor.getString(4);
+            String a5 = cursor.getString(5);
+            String a6 = cursor.getString(6);
+            String a7 = cursor.getString(7);
+            String a8 = cursor.getString(8);
+            String a9 = cursor.getString(9);
+            Card card = new Card(Integer.valueOf(a),a1,a2,a3,a4,a5,a6,a7,a8,a9);
+            String hero_string = "";
+            if(hero != null)
+            switch (hero){
+                case 1:{hero_string = "Priest"; break;}
+                case 2:{hero_string = "Warrior"; break;}
+                case 3:{hero_string = "Mage"; break;}
+                case 4:{hero_string = "Rogue"; break;}
+                case 5:{hero_string = "Druid"; break;}
+                case 6:{hero_string = "Warlock"; break;}
+                case 7:{hero_string = "Hunter"; break;}
+                case 8:{hero_string = "Paladin"; break;}
+                case 9:{hero_string = "Shaman"; break;}
+                default: hero_string="null";
+                //default: hero = "null"; //deck must have a hero set
+            }
+            int ave=3;
+            if(hero == null || card.getHero().equals(hero_string) || card.getHero().equals("null"))
+            result.add(card);
+        }while(cursor.moveToNext());
+        return result;
+    }
     public void executeCardBatch(){
         SQLiteDatabase db = getWritableDatabase();
         try{

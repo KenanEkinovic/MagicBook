@@ -58,6 +58,27 @@ else if(isset($_GET["newDeck"]))
 	else
 		echo '[{"newDeck":"0"}]';
 }
+else if(isset($_GET["deleteDeck"]))
+{
+	$deleted1 = FALSE;
+	$deleted2 = FALSE;
+
+	$query = sprintf("DELETE FROM cardindeck WHERE player=%u AND deck=%u", $_GET["player_id"], $_GET["deck_id"]);
+	if($conn->query($query) == TRUE)
+		$deleted1 = TRUE;
+
+
+	$query = sprintf("DELETE FROM deck WHERE player=%u AND id=%u", $_GET["player_id"], $_GET["deck_id"]);
+	if($conn->query($query) == TRUE)
+		$deleted2 = TRUE;
+
+
+	if($deleted1 && $deleted2)
+		echo '[{"deletedDeck":"1"}]';
+	else
+		echo '[{"deletedDeck":"0"}]';
+
+}
 else if(isset($_GET["login"]))
 {
 	$query = sprintf("SELECT id as 'login' from player where username='%s' and password='%s'", $_GET['username'], $_GET['password']);

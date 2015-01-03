@@ -35,8 +35,11 @@ public class DeckActivity extends ActionBarActivity {
     public static ArrayList<String> cards_in_deck = new ArrayList<String>();
     FrameLayout card_manager;
     TextView txtDeckSize;
-
+    Button btnLoss;
+    Button btnWin;
     Deck myDeck;
+    TextView txtWins;
+    TextView txtLosses;
     public void onDialogClosed(int  card_id, boolean insert2, boolean delete){
         DatabaseHandler dbh = DatabaseHandler.getInstance(getApplicationContext());
         Card card = dbh.getCard(card_id);
@@ -107,16 +110,12 @@ public class DeckActivity extends ActionBarActivity {
     private void refreshCardListView(){
         final DatabaseHandler dbh = DatabaseHandler.getInstance(this.getApplicationContext());
         myCardsLayout.removeAllViews();
-        //Toast.makeText(getApplicationContext(), ""+cards_in_deck.size(),Toast.LENGTH_SHORT).show();
         for(int i=0; i<cards_in_deck.size(); i++)
         {
             Button btnCard = new Button(this);
             String provjera = cards_in_deck.get(i);
             Card c = dbh.getCard(provjera);
-            //Card c = dbh.getCard(cards_in_deck.get(i).getId());
-            //btnCard.setText("OUYEAR " + c.getName());
             btnCard.setText(c.getName().replace('_',' '));
-            //btnCard.setText(c.getName());
             btnCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -125,8 +124,6 @@ public class DeckActivity extends ActionBarActivity {
                     CardDialog cd = new CardDialog(c);
                     cd.setDeckLayoutOptions(true);
                     cd.show(getSupportFragmentManager(), "CardDialog");
-                    //cd.setDeckLayoutOptions(true);
-                    //cd.show(getCallingActivity().getFragmentManager(), "CardDialog");
                 }
             });
             myCardsLayout.addView(btnCard);
@@ -142,26 +139,38 @@ public class DeckActivity extends ActionBarActivity {
         setContentView(R.layout.activity_deck);
         card_manager = (FrameLayout) findViewById(R.id.cardManagerLayout);
         card_manager.setVisibility(View.GONE);
+
+        btnWin = (Button) findViewById(R.id.btnWin);
+        btnLoss = (Button) findViewById(R.id.btnLoss);
         myCardsLayout = (LinearLayout) findViewById(R.id.myCardsLayout);
         txtDeckSize = (TextView) findViewById(R.id.txtDeckSize);
+        txtWins = (TextView) findViewById(R.id.txtWins);
+        txtLosses = (TextView) findViewById(R.id.txtLosses);
         Button btnManageCards = (Button) findViewById(R.id.btnManageCards);
         btnManageCards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Button me = (Button) v;
-                if(card_manager.getVisibility() == View.VISIBLE)
+                if(card_manager.getVisibility() == View.VISIBLE) {
                     card_manager.setVisibility(View.GONE);
-
-                else if(card_manager.getVisibility() == View.GONE)
+                    me.setText("Add Cards");
+                    btnWin.setVisibility(View.VISIBLE);
+                    btnLoss.setVisibility(View.VISIBLE);
+                }
+                else if(card_manager.getVisibility() == View.GONE) {
                     card_manager.setVisibility(View.VISIBLE);
-
+                    me.setText("Return to deck");
+                    btnWin.setVisibility(View.GONE);
+                    btnLoss.setVisibility(View.GONE);
+                }
             }
         });
 
         Bundle b = getIntent().getExtras();
-        int deck_id = b.getInt("deck_id");
+        //int deck_id = b.getInt("deck_id");
+        String deck_name = b.getString("deck_name");
         final DatabaseHandler dbh = DatabaseHandler.getInstance(getApplicationContext());
-        myDeck = dbh.getDeck(deck_id);
+        myDeck = dbh.getDeck(deck_name);
 
         setTitle( "Deck menu : " + myDeck.getName());
 
@@ -245,35 +254,6 @@ public class DeckActivity extends ActionBarActivity {
         @Override
         protected JSONArray doInBackground(ApiConnector... params) {
             return params[0].getCardsInDeck(d);
-            /*ArrayList<String> result = new ArrayList<String>();
-            JSONArray jsonArray = params[0].getCardsInDeck(d);
-            final DatabaseHandler dbh = DatabaseHandler.getInstance(getApplicationContext());
-            JSONObject jo = null;
-            try{
-                for(int i=0; i<jsonArray.length(); i++) {
-                    jo = jsonArray.getJSONObject(i);
-                    int card_id = jo.getInt("card");
-                    String card_name = jo.getString("name");
-                    result.add(card_name);
-                    Button b = new Button(parent.getApplicationContext());
-                    b.setText(card_name);
-                    b.setTextColor(Color.BLACK);
-                    myCardsLayout.addView(b);
-                    b.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Button btn = (Button) v;
-                            Card c = dbh.getCard(btn.getText().toString());
-                            CardDialog cd = new CardDialog(c);
-                            cd.setDeckLayoutOptions(true);
-                            cd.show(getSupportFragmentManager(), "CardDialog");
-                        }
-                    });
-                }
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            return result;*/
         }
 
         @Override
@@ -308,8 +288,9 @@ public class DeckActivity extends ActionBarActivity {
 
             cards_in_deck = result;
             txtDeckSize.setText(cards_in_deck.size()+"/30");
+            txtWins.setText("Wins: "+myDeck.getNumber_of_wins());
+            txtLosses.setText("Losses: "+myDeck.getNumber_of_losses());
             Toast.makeText(getApplicationContext(), cards_in_deck.size() + " cards found for this deck", Toast.LENGTH_SHORT).show();
-            //refreshCardListView();
         }
     }
 }

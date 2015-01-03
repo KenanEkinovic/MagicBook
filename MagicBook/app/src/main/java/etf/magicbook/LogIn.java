@@ -44,6 +44,8 @@ public class LogIn extends ActionBarActivity {
         setContentView(R.layout.activity_log_in);
         reference = this;
 
+        new GetCards(this).execute(new ApiConnector());
+
         this.buttonLogin = (Button) this.findViewById(R.id.buttonLogin);
         this.txtPassword = (EditText) this.findViewById(R.id.editTextPassword);
         this.txtUsername = (EditText) this.findViewById(R.id.editTextUsername);
@@ -159,6 +161,65 @@ public class LogIn extends ActionBarActivity {
             {
                 Toast.makeText(parent, "Player with that username already exists.\nPlease, choose another username.", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private class GetCards extends AsyncTask<ApiConnector,Long,JSONArray>{
+        LogIn parent;
+        GetCards(LogIn l){
+            parent = l;
+        }
+
+        @Override
+        protected JSONArray doInBackground(ApiConnector... params) {
+            JSONArray res = params[0].Cards(null);
+            int a= 3;
+            return  res;
+            //return params[0].Cards(null);
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray){
+            final DatabaseHandler dbh = DatabaseHandler.getInstance(parent);
+            dbh.deleteAllCards();
+            JSONObject jo = null;
+            try{
+                for(int i=0; i<jsonArray.length(); i++)
+                {
+                    jo = jsonArray.getJSONObject(i);
+                    int id = Integer.valueOf(jo.getString("id"));
+                    String name = jo.getString("name");
+                    String hero = jo.getString("hero");
+                    switch (hero){
+                        case "1":{hero = "Priest"; break;}
+                        case "2":{hero = "Warrior"; break;}
+                        case "3":{hero = "Mage"; break;}
+                        case "4":{hero = "Rogue"; break;}
+                        case "5":{hero = "Druid"; break;}
+                        case "6":{hero = "Warlock"; break;}
+                        case "7":{hero = "Hunter"; break;}
+                        case "8":{hero = "Paladin"; break;}
+                        case "9":{hero = "Shaman"; break;}
+                        default: hero = "null";
+                    }
+                    String rarity = jo.getString("rarity");
+                    String type = jo.getString("type");
+                    String subtype = jo.getString("subtype");
+                    String cost = jo.getString("cost");
+                    String attack = jo.getString("attack");
+                    String hp = jo.getString("hp");
+                    String pictureURL = jo.getString("picture");
+                    Card c = new Card(id, name.replace(' ','_'), hero, type, subtype, rarity, cost, attack, hp, pictureURL);
+                    dbh.createCard(c); //putting a card into batch
+                }
+                dbh.executeCardBatch();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+
         }
     }
 }

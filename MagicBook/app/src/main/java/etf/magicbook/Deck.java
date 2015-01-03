@@ -19,6 +19,8 @@ public class Deck {
         this.player = player;
     }
 
+    public void setId(int val) { id = val; }
+
     public String getPlayer(){
         return player;
     }

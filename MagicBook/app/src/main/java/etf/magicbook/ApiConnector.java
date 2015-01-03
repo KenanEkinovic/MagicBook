@@ -61,6 +61,10 @@ public class ApiConnector {
         do_it(extension);
         return ja;
     }
+    public JSONArray deleteDeck(Deck d){
+        do_it("?deleteDeck&player_id="+LogIn.PLAYER_ID+"&deck_id="+d.getId());
+        return ja;
+    }
     public JSONArray createDeck(Deck d){
         String hero = d.getHero();
         int hero_id=0;

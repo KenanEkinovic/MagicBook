@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -81,9 +82,24 @@ public class DeckList extends Fragment {
         btnNewDeck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(v.getContext(), newDeckName.getText().toString() + " " + spinnerHero.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+                String deck_name = newDeckName.getText().toString();
+                if(deck_name == null || deck_name.equals(""))
+                {
+                    Toast.makeText(getActivity().getApplicationContext(), "Enter a name for the new deck", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(deck_name.length() > 20){
+                    Toast.makeText(getActivity().getApplicationContext(), "Name cannot be larger than 20 characters", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 final DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
                 ArrayList<Deck> allDecks = dbh.getAllDecks();
+                for(int i=0; i<allDecks.size(); i++){
+                    if(deck_name.equals(allDecks.get(i).getName().toString())){
+                        Toast.makeText(getActivity(), "Deck with that name already exists", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
                 if(allDecks == null)
                     allDecks = new ArrayList<Deck>();
                 if(allDecks.size() < 9) {
@@ -100,6 +116,7 @@ public class DeckList extends Fragment {
                             Button btnNew = new Button(v.getContext());
                             btnNew.setText(allDecks.get(j).getHero() + "\n" + allDecks.get(j).getName().replace('_',' '));
                             btnNew.setOnClickListener(new DeckButtonListener());
+                            btnNew.setOnLongClickListener(new DeckButtonLongListener());
                             main_deck_layout.addView(btnNew);
                         }
                 }
@@ -180,6 +197,7 @@ public class DeckList extends Fragment {
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
             final DatabaseHandler dbh = DatabaseHandler.getInstance(parent.getActivity().getApplicationContext());
+            dbh.deleteAllDecks();
             JSONObject jo = null;
             try{
                 for(int i=0; i<jsonArray.length(); i++)
@@ -209,6 +227,7 @@ public class DeckList extends Fragment {
                     Button btnDeck = new Button(parent.getActivity());
                     btnDeck.setText(hero + "\n" + name);
                     btnDeck.setOnClickListener(new DeckButtonListener());
+                    btnDeck.setOnLongClickListener(new DeckButtonLongListener());
                     main_deck_layout.addView(btnDeck);
                 }
                 dbh.executeDeckBatch();
@@ -217,6 +236,60 @@ public class DeckList extends Fragment {
             {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private class DeleteDeck extends AsyncTask<ApiConnector, Long, JSONArray>{
+        Deck deck;
+        DeleteDeck(Deck d){deck = d;}
+        @Override
+        protected JSONArray doInBackground(ApiConnector... params) {
+            return params[0].deleteDeck(deck);
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray) {
+            final DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
+            JSONObject jo = null;
+            try {
+                jo =jsonArray.getJSONObject(0);
+                if(jo.getInt("deletedDeck") == 0)
+                {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error while deleteing deck\nPlase try again later", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                dbh.deleteDeck(deck);
+                String delete = deck.getHero()+"\n"+deck.getName();
+                for(int i=0; i<main_deck_layout.getChildCount(); i++)
+                {
+                    Button b = (Button) main_deck_layout.getChildAt(i);
+                    String button_name = b.getText().toString();
+                    if(delete.equals(button_name))
+                        main_deck_layout.removeViewAt(i);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class DeckButtonLongListener implements View.OnLongClickListener{
+        @Override
+        public boolean onLongClick(View v) {
+            DatabaseHandler dbh = DatabaseHandler.getInstance(getActivity().getApplicationContext());
+            Button btn = (Button)v;
+            String deckName = (btn.getText().toString());
+
+            for(int c = 0; c<deckName.length(); c++){
+                if(deckName.charAt(c) == '\n') {
+                    deckName = deckName.substring(c + 1);
+                    break;
+                }
+            }
+            Deck d = dbh.getDeck(deckName.replace(' ','_'));
+            new DeleteDeck(d).execute(new ApiConnector());
+            return true;
         }
     }
 
@@ -236,7 +309,8 @@ public class DeckList extends Fragment {
             Intent inte = new Intent(getActivity(), DeckActivity.class);
             Deck d = dbh.getDeck(deckName.replace(' ','_'));
             Bundle b = new Bundle();
-            b.putInt("deck_id", d.getId());
+            //b.putInt("deck_id", d.getId());
+            b.putString("deck_name", d.getName());
 
             inte.putExtras(b);
             startActivity(inte);
