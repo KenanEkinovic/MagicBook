@@ -262,7 +262,7 @@ public class DeckActivity extends ActionBarActivity{
         @Override
         protected void onPostExecute(ArrayList<String> res) {
             cards_in_deck = res;
-            refreshCardListView();
+            //refreshCardListView();
         }
     }
 }
