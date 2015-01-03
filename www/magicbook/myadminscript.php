@@ -10,7 +10,27 @@ mysqli_select_db($conn, "magicbookdb");
 
 $query = "";
 
-if(isset($_GET["insertCardInDeck"]))
+if(isset($_GET["win"]))
+{
+	$query = sprintf("UPDATE deck SET number_of_wins=number_of_wins+1 where player=%d and id=%d", $_GET["player_id"], $_GET["deck_id"]);
+
+	if($conn->query($query) == TRUE)
+	echo '[{"updateOK":"1"}]';
+	else
+		echo '[{"updateOK":"0"}]';
+
+
+}
+else if(isset($_GET["loss"]))
+{
+	$query = sprintf("UPDATE deck SET number_of_losses=number_of_losses+1 where player=%d and id=%d", $_GET["player_id"], $_GET["deck_id"]);
+
+	if($conn->query($query) == TRUE)
+	echo '[{"updateOK":"1"}]';
+	else
+		echo '[{"updateOK":"0"}]';
+}
+else if(isset($_GET["insertCardInDeck"]))
 {
 	$query = sprintf("INSERT INTO cardindeck VALUES (%d, %d, %d)", $_GET["player_id"], $_GET["deck_id"], $_GET["card_id"]);
 	if($conn->query($query) == TRUE)

@@ -44,4 +44,7 @@ public class Deck {
     public int getNumber_of_losses() {
         return number_of_losses;
     }
+
+    public void loose(){ number_of_losses++; }
+    public void win(){ number_of_wins++; }
 }

@@ -22,6 +22,18 @@ public class ApiConnector {
     static String url = "http://192.168.0.102/magicbook/myadminscript.php";
     static HttpEntity httpEntity = null;
     JSONArray ja;
+
+    public JSONArray incrementWinOrLoss(Deck d, boolean win){
+        String extension = "";
+        if(win)
+            extension += "?win&player_id=";
+        else
+            extension += "?loss&player_id=";
+        extension += LogIn.PLAYER_ID + "&deck_id=" + d.getId();
+
+        do_it(extension);
+        return ja;
+    }
     public JSONArray getCardsInDeck(Deck d){
         //?cardsInDeck&player_id=22&deck_id=1
         //do_it("?cardsInDeck&player_id="+LogIn.PLAYER_ID+"&deck_id="+d.getId());

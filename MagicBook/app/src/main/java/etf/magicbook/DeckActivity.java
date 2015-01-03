@@ -25,6 +25,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
@@ -140,12 +141,24 @@ public class DeckActivity extends ActionBarActivity {
         card_manager = (FrameLayout) findViewById(R.id.cardManagerLayout);
         card_manager.setVisibility(View.GONE);
 
-        btnWin = (Button) findViewById(R.id.btnWin);
-        btnLoss = (Button) findViewById(R.id.btnLoss);
         myCardsLayout = (LinearLayout) findViewById(R.id.myCardsLayout);
         txtDeckSize = (TextView) findViewById(R.id.txtDeckSize);
         txtWins = (TextView) findViewById(R.id.txtWins);
         txtLosses = (TextView) findViewById(R.id.txtLosses);
+        btnWin = (Button) findViewById(R.id.btnWin);
+        btnWin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new UpdateWL(myDeck, true).execute(new ApiConnector());
+            }
+        });
+        btnLoss = (Button) findViewById(R.id.btnLoss);
+        btnLoss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new UpdateWL(myDeck, false).execute(new ApiConnector());
+            }
+        });
         Button btnManageCards = (Button) findViewById(R.id.btnManageCards);
         btnManageCards.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,7 +185,7 @@ public class DeckActivity extends ActionBarActivity {
         final DatabaseHandler dbh = DatabaseHandler.getInstance(getApplicationContext());
         myDeck = dbh.getDeck(deck_name);
 
-        setTitle( "Deck menu : " + myDeck.getName());
+        setTitle("Deck menu : " + myDeck.getName());
 
         task = new GetCardsFromDeck(this, myDeck);
         task.execute(new ApiConnector());
@@ -291,6 +304,49 @@ public class DeckActivity extends ActionBarActivity {
             txtWins.setText("Wins: "+myDeck.getNumber_of_wins());
             txtLosses.setText("Losses: "+myDeck.getNumber_of_losses());
             Toast.makeText(getApplicationContext(), cards_in_deck.size() + " cards found for this deck", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public class UpdateWL extends AsyncTask<ApiConnector, Long, JSONArray>{
+        boolean win;
+        DeckActivity parent;
+        Deck deck;
+        UpdateWL(Deck d, boolean win){
+            this.win = win;
+            //this.parent = l;
+            this.deck = d;
+        }
+        @Override
+        protected JSONArray doInBackground(ApiConnector... params) {
+            return params[0].incrementWinOrLoss(deck,win);
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray) {
+            try {
+                JSONObject jo = jsonArray.getJSONObject(0);
+                int result = jo.getInt("updateOK");
+
+                if(result == 0){
+                    Toast.makeText(getApplicationContext(), "There has been an error updating wins or losses", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else
+                {
+                    if(win)
+                    {
+                        myDeck.win();
+                        txtWins.setText("Wins: " + myDeck.getNumber_of_wins());
+                    }
+                    else
+                    {
+                        myDeck.loose();
+                        txtLosses.setText("Losses: " + myDeck.getNumber_of_losses());
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
