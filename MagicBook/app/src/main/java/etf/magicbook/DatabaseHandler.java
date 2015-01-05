@@ -35,12 +35,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "cost INTEGER, attack INTEGER, hp INTEGER, picture TEXT)");
         db.execSQL("CREATE TABLE deck (id INTEGER, player TEXT, name TEXT, hero INTEGER," +
                 "number_of_wins INTEGER, number_of_losses INTEGER)");
+        db.execSQL("CREATE TABLE db_version (id INTEGER PRIMARY KEY, version INTEGER)");
+        db.execSQL("INSERT INTO db_version VALUES (1,0)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS card");
         db.execSQL("DROP TABLE IF EXISTS deck");
+        db.execSQL("DROP TABLE IF EXISTS db_version");
         onCreate(db);
     }
 
@@ -156,6 +159,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
             d.setId(d.getId()+1);
         }while(id_taken);
+    }
+    public int getVersion(){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT version FROM db_version where id=1", null);
+        if(c.moveToFirst()){
+            return c.getInt(0);
+        }
+        return 0;
+    }
+    public boolean updateVersion(int version){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("UPDATE db_version SET version="+version+" WHERE id=1");
+        return true;
     }
 
     public ArrayList<Card> getCards(Integer hero){

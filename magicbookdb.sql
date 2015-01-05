@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 04, 2015 at 12:23 AM
+-- Generation Time: Jan 05, 2015 at 06:55 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -647,9 +647,6 @@ CREATE TABLE IF NOT EXISTS `cardindeck` (
 --
 
 INSERT INTO `cardindeck` (`player`, `deck`, `card`) VALUES
-(25, 1, 10),
-(25, 1, 7),
-(25, 1, 7),
 (22, 1, 11),
 (22, 1, 11),
 (22, 1, 10),
@@ -724,9 +721,7 @@ CREATE TABLE IF NOT EXISTS `deck` (
 --
 
 INSERT INTO `deck` (`id`, `name`, `hero`, `player`, `number_of_wins`, `number_of_losses`) VALUES
-(1, 'ttt', 1, 22, 76, 33),
-(1, 'test 1', 7, 25, 6, 2),
-(2, 'yy', 1, 25, 0, 0);
+(1, 'ttt', 1, 22, 76, 33);
 
 -- --------------------------------------------------------
 
@@ -785,8 +780,7 @@ CREATE TABLE IF NOT EXISTS `player` (
 INSERT INTO `player` (`id`, `username`, `email`, `level`, `password`, `number_of_wins`, `number_of_losses`) VALUES
 (22, 'Kenan', 'nanekinovic@gmail.com', 5, 'kenan', 211, 134),
 (23, 'Berina', 'bmuratovic1@gmail.com', 2, 'berina', 72, 43),
-(24, 'Lejla', 'lejlaa.fazlagic@gmail.com', 1, 'lejla', 0, 0),
-(25, 'test', 'testmail', 2, 'test', 80, 18);
+(24, 'Lejla', 'lejlaa.fazlagic@gmail.com', 1, 'lejla', 0, 0);
 
 --
 -- Triggers `player`

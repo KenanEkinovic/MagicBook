@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -39,7 +41,8 @@ public class LogIn extends ActionBarActivity {
         setContentView(R.layout.activity_log_in);
         reference = this;
 
-        new GetCards(this).execute(new ApiConnector());
+        new GetVersion(this).execute(new ApiConnector());
+        //new GetCards(this).execute(new ApiConnector());
 
         this.buttonLogin = (Button) this.findViewById(R.id.buttonLogin);
         this.txtPassword = (EditText) this.findViewById(R.id.editTextPassword);
@@ -167,10 +170,38 @@ public class LogIn extends ActionBarActivity {
         }
     }
 
+    private class GetVersion extends AsyncTask<ApiConnector,Long,JSONArray>{
+        LogIn parent;
+        GetVersion(LogIn l){parent = l;}
+        @Override
+        protected JSONArray doInBackground(ApiConnector... params) {
+            return params[0].getMainDBVersion();
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray) {
+            DatabaseHandler dbh = DatabaseHandler.getInstance(parent.getApplicationContext());
+            int localVersion = dbh.getVersion();
+            try {
+                JSONObject jo = jsonArray.getJSONObject(0);
+                int mainVersion = jo.getInt("version");
+
+                if(mainVersion != localVersion){
+                    new GetCards(parent, mainVersion).execute(new ApiConnector());
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private class GetCards extends AsyncTask<ApiConnector,Long,JSONArray>{
         LogIn parent;
-        GetCards(LogIn l){
+        int newVersion;
+        GetCards(LogIn l, int newVersion){
             parent = l;
+            this.newVersion = newVersion;
         }
 
         @Override
@@ -217,6 +248,7 @@ public class LogIn extends ActionBarActivity {
                     dbh.createCard(c); //putting a card into batch
                 }
                 dbh.executeCardBatch();
+                dbh.updateVersion(newVersion);
             }
             catch (Exception e)
             {

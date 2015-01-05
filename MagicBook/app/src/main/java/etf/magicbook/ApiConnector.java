@@ -99,6 +99,10 @@ public class ApiConnector {
         do_it("?newDeck&id="+d.getId()+"&name="+d.getName()+"&hero="+hero_id+"&player_id="+LogIn.PLAYER_ID);
         return ja;
     }
+    public JSONArray getMainDBVersion(){
+        do_it("?version");
+        return ja;
+    }
     public JSONArray Decks(String username){
         do_it("?player_decks&username="+username);
         return ja;
