@@ -26,22 +26,8 @@ import java.net.URL;
 public class CardDialog extends DialogFragment {
 
     Card myCard;
-/*
-    String txtName;
-    String txtHero;
-    String txtRarity;
-    String txtType;
-    String txtSubtype;
-    String txtCost;
-    String txtAttack;
-    String txtHp;
-    String pictureURL;*/
 
     boolean showDeckLayoutOptions;
-
-    public void setMyCard(Card c){
-        myCard = c;
-    }
 
     LinearLayout DeckCardLayout;
     public CardDialog(Card c){myCard = c;}

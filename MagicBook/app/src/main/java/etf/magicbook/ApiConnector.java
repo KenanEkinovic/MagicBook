@@ -17,9 +17,9 @@ import java.io.IOException;
  */
 public class ApiConnector {
 
-    ApiConnector(){ ja = null;}
+    ApiConnector(){ ja = null; }
 
-    static String url = "http://192.168.0.102/magicbook/myadminscript.php";
+    public static String url = "http://192.168.0.102/magicbook/myadminscript.php";
     static HttpEntity httpEntity = null;
     JSONArray ja;
 
@@ -56,7 +56,6 @@ public class ApiConnector {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //Log.e("Entity Response: ", response);
 
         try {
             result = new JSONArray(response);
@@ -140,7 +139,6 @@ public class ApiConnector {
             httpEntity = httpResponse.getEntity();
 
             String response = EntityUtils.toString(httpEntity);
-            //Log.e("Entity Response: ", response);
 
             ja = new JSONArray(response);
         }

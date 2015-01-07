@@ -3,9 +3,10 @@ package etf.magicbook;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -41,14 +42,26 @@ public class LogIn extends ActionBarActivity {
         setContentView(R.layout.activity_log_in);
         reference = this;
 
-        new GetVersion(this).execute(new ApiConnector());
-        //new GetCards(this).execute(new ApiConnector());
-
         this.buttonLogin = (Button) this.findViewById(R.id.buttonLogin);
+        this.buttonRegister = (Button) this.findViewById(R.id.buttonRegister);
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        if (netInfo == null)
+        {
+            Toast.makeText(getApplicationContext(), "Cannot connect to internet\nPlease, close the app and try again.", Toast.LENGTH_LONG).show();
+            buttonLogin.setEnabled(false);
+            buttonRegister.setEnabled(false);
+        }
+        else
+        {
+            new GetVersion(this).execute(new ApiConnector());
+        }
+
+
         this.txtPassword = (EditText) this.findViewById(R.id.editTextPassword);
         this.txtUsername = (EditText) this.findViewById(R.id.editTextUsername);
 
-        this.buttonRegister = (Button) this.findViewById(R.id.buttonRegister);
         this.txtNewPassword = (EditText) this.findViewById(R.id.txtNewPassword);
         this.txtNewUsername = (EditText) this.findViewById(R.id.txtNewUsername);
         this.txtNewEmail = (EditText) this.findViewById(R.id.txtNewEmail);
@@ -209,7 +222,6 @@ public class LogIn extends ActionBarActivity {
             JSONArray res = params[0].Cards(null);
             int a= 3;
             return  res;
-            //return params[0].Cards(null);
         }
 
         @Override
